@@ -711,6 +711,11 @@ module.exports = {
       "2xl": "0 25px 25px rgb(0 0 0 / 0.15)",
       none: "0 0 #0000",
     },
+    extend: {
+      fontFamily: {
+        sans: ["var(--font-open-sans)", "sans-serif"],
+      },
+    },
     fill: ({ theme }) => theme("colors"),
     grayscale: {
       0: "0",

@@ -1,19 +1,16 @@
+import React, { useState } from "react";
 import { Switch } from "@mui/material";
-import styled from "@emotion/styled";
-import { Controller } from "react-hook-form";
-import { FormGroup } from "@mui/material";
-import { FormControlLabel } from "@mui/material";
+import { styled } from "@mui/material/styles";
 
-const StyledCheckboxSlider = styled((props) => (
-  <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
-))(({ theme }) => ({
-  width: 42,
+const StyledCheckboxSlider = styled(Switch)(({ theme }) => ({
+  width: 46,
   height: 26,
   padding: 0,
+  marginRight: "4px",
   "& .MuiSwitch-switchBase": {
     padding: 0,
     margin: 2,
-    transitionDuration: "300ms",
+    transition: "transform 300ms, color 300ms", // Use standard CSS strings for safety
     "&.Mui-checked": {
       transform: "translateX(16px)",
       color: "#fff",
@@ -21,33 +18,10 @@ const StyledCheckboxSlider = styled((props) => (
         backgroundColor: "#3A416FF2",
         opacity: 1,
         border: 0,
-        ...theme.applyStyles("dark", {
-          backgroundColor: "#2ECA45",
-        }),
       },
-      "&.Mui-disabled + .MuiSwitch-track": {
-        opacity: 0.5,
-      },
-    },
-    "&.Mui-focusVisible .MuiSwitch-thumb": {
-      color: "#33cf4d",
-      border: "6px solid #fff",
-    },
-    "&.Mui-disabled .MuiSwitch-thumb": {
-      color: theme.palette.grey[100],
-      ...theme.applyStyles("dark", {
-        color: theme.palette.grey[600],
-      }),
-    },
-    "&.Mui-disabled + .MuiSwitch-track": {
-      opacity: 0.7,
-      ...theme.applyStyles("dark", {
-        opacity: 0.3,
-      }),
     },
   },
   "& .MuiSwitch-thumb": {
-    boxSizing: "border-box",
     width: 22,
     height: 22,
   },
@@ -55,22 +29,33 @@ const StyledCheckboxSlider = styled((props) => (
     borderRadius: 26 / 2,
     backgroundColor: "#E9E9EA",
     opacity: 1,
-    transition: theme.transitions.create(["background-color"], {
-      duration: 500,
-    }),
-    ...theme.applyStyles("dark", {
-      backgroundColor: "#39393D",
-    }),
+    // Safely access theme with a fallback to avoid '_names' null error
+    transition: theme?.transitions?.create
+      ? theme.transitions.create(["background-color"], { duration: 500 })
+      : "background-color 500ms ease-in-out",
   },
 }));
 
-export const SliderSwitch = ({ name, control, ...props }) => (
-  <>
-    <FormGroup>
-      <FormControlLabel
-        control={<StyledCheckboxSlider />}
-        label={props?.label}
+export const SliderSwitch = ({ status, label }) => {
+  const [checked, setChecked] = useState(status);
+
+  const handleChange = (event) => {
+    setChecked(event.target.checked);
+  };
+
+  return (
+    <div className="grid grid-flow-col gap-2">
+      <StyledCheckboxSlider
+        checked={checked}
+        onChange={handleChange}
+        disabled={isDisabled}
+        inputProps={{ "aria-label": "controlled" }}
       />
-    </FormGroup>
-  </>
-);
+      {label ? (
+        <p className="font-normal text-sm">
+          {checked ? "Toggle ON" : "Toggle OFF"}
+        </p>
+      ) : null}
+    </div>
+  );
+};

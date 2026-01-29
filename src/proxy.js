@@ -27,7 +27,7 @@ export default function middleware(req) {
 
   let parsedAccessMenu = null;
 
-  const currentPath = "webapp" + req.nextUrl.pathname;
+  const currentPath = req.nextUrl.pathname;
 
   const isValidAccess =
     parsedAccessMenu && Array.isArray(parsedAccessMenu)
@@ -54,7 +54,7 @@ export default function middleware(req) {
   /* === BELOW IS USER WHO NOT UNATHORIZED OR NOT HAVING ACCESS === */
 
   /* === PUBLIC ROUTE === */
-  if (["/login"].includes(req.nextUrl.pathname)) {
+  if (["/login", "/setting-role"].includes(req.nextUrl.pathname)) {
     return NextResponse.next();
   }
 
