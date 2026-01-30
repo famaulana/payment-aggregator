@@ -6,6 +6,7 @@ import { LoginSchema } from "@/schemas/login";
 import Image from "next/image";
 import { BackgroundLogin } from "@/components/atoms/background/BackgroundLogin";
 import { SliderSwitch } from "@/components/molecules/form-inputs/Switch";
+import { DefaultButton } from "@/components/atoms/button/DefaultButton";
 
 const Login = () => {
   const methods = useForm({
@@ -74,11 +75,7 @@ const Login = () => {
                       <SliderSwitch label="Remember Me" />
                     </div> */}
                     <div className="text-center w-full px-6 items-center">
-                      <button
-                        type="button"
-                        className="inline-block w-full px-6 py-3 mt-6 mb-0 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer shadow-soft-md bg-x-25 bg-150 leading-pro text-xs ease-soft-in tracking-tight-soft bg-linear-to-tl from-[#473D97] to-[#E42D5D] hover:scale-102 hover:shadow-soft-xs active:opacity-85">
-                        Sign in
-                      </button>
+                      <DefaultButton>Sign In</DefaultButton>
                     </div>
                     {/* <div className="p-6 px-1 pt-0 w-full lg:w-1/2 text-center bg-transparent border-t-0 border-t-solid rounded-b-2xl lg:px-2">
                       <p className="mx-auto mb-6 leading-normal text-sm">

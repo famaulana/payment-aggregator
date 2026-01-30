@@ -13,6 +13,7 @@ import createCache from "@emotion/cache";
 import { CacheProvider } from "@emotion/react";
 
 import { muiTheme, openSansFont } from "@/styles/_config";
+import { GlobalModalComponent } from "@/components/organisms/global";
 
 // ✅ Create client cache with prepend
 const clientSideEmotionCache = createCache({ key: "css", prepend: true });
@@ -41,7 +42,7 @@ export default function App({
               {/* <LocalizationProvider dateAdapter={AdapterDayjs}> */}
               <CssBaseline />
               <Component {...pageProps} />
-              {/* <ModalGlobal /> */}
+              <GlobalModalComponent />
               {/* <Toaster /> */}
               {/* </LocalizationProvider> */}
             </ThemeProvider>
