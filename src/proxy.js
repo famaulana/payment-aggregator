@@ -15,41 +15,25 @@ export const config = {
 };
 
 export default function middleware(req) {
-  // Intercept SSO from BRISPOT Web PHP to api/validate.js and rewrite to API
-  if (req.method === "POST" && req.nextUrl.pathname === "/validate") {
-    return NextResponse.rewrite(new URL("/api/validate", req.url));
+  const token = req.cookies.get("auth_token")?.value;
+  const isLoginPage = req.nextUrl.pathname === "/login";
+
+  // only redirect to dashboard if the token is actually valid.
+  if (token && isLoginPage) {
+    return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
-  // const { token, username } = getSecuredCookieCredential(
-  //   req.cookies.get("token")?.value,
-  //   req.cookies.get("username")?.value,
-  // );
+  // If NO token and NOT on login page, go to login
+  if (!token && !isLoginPage) {
+    const response = NextResponse.redirect(new URL("/login", req.url));
+    // Force clear just in case
+    response.cookies.set("auth_token", "", { path: "/", maxAge: 0 });
+    return response;
+  }
 
-  let parsedAccessMenu = null;
-
-  const currentPath = req.nextUrl.pathname;
-
-  const isValidAccess =
-    parsedAccessMenu && Array.isArray(parsedAccessMenu)
-      ? Boolean(parsedAccessMenu.find((item) => currentPath?.startsWith(item)))
-      : false;
-
-  const allowedRoutes =
-    ["/validate", "/bri.ico", "/verification-access-link"].includes(
-      req.nextUrl.pathname,
-    ) ||
-    req.nextUrl.pathname.startsWith("/tinymce/") ||
-    req.nextUrl.pathname.startsWith("/_next/");
-
-  // const isAuthenticated = token && username;
-
-  // if (isAuthenticated && req.nextUrl.pathname !== "/403") {
-  //   if (!isValidAccess && !allowedRoutes) {
-  //     return NextResponse.redirect(new URL("/webapp/403", req.url));
-  //   }
-
-  //   return NextResponse.next();
-  // }
+  if (token && req.nextUrl.pathname !== "/403") {
+    return NextResponse.next();
+  }
 
   /* === BELOW IS USER WHO NOT UNATHORIZED OR NOT HAVING ACCESS === */
 

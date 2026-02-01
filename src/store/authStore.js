@@ -9,12 +9,15 @@ export const useAuthStore = create((set) => ({
   setSession: (user, token) => {
     set({ user, token });
     // Save to cookie for server-side access (expires in 7 days)
-    setCookie("auth_token", token, { maxAge: 60 * 60 * 24 * 7 });
+    setCookie("auth_token", token, {
+      path: "/", // 👈 CRITICAL: Must be root path
+      maxAge: 60 * 60 * 24 * 7,
+    });
   },
 
   logout: () => {
     set({ user: null, token: null });
-    deleteCookie("auth_token");
+    deleteCookie("auth_token", { path: "/" });
     window.location.href = "/login"; // Force a clean redirect
   },
 }));

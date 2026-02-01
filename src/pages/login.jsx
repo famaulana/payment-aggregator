@@ -4,17 +4,24 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { LoginSchema } from "@/schemas/login";
 import Image from "next/image";
-import { BackgroundLogin } from "@/components/atoms/background/BackgroundLogin";
-import { SliderSwitch } from "@/components/molecules/form-inputs/Switch";
 import { DefaultButton } from "@/components/atoms/button/DefaultButton";
+import { PasswordTextField } from "@/components/molecules/form-inputs/PasswordTextField";
+import { useLogin } from "@/features/auth/hooks/useLogin";
 
 const Login = () => {
+  const { mutate: login } = useLogin();
+
   const methods = useForm({
     mode: "all",
     resolver: yupResolver(LoginSchema),
   });
 
   const { control } = methods;
+
+  const submit = (value) => {
+    login(value);
+  };
+
   return (
     <>
       <main className="mt-0 transition-all duration-200 ease-soft-in-out w-full">
@@ -46,11 +53,12 @@ const Login = () => {
                       <FormBuilder
                         methods={methods}
                         className="w-full"
+                        onSubmit={submit}
                         fields={[
                           {
                             component: (
                               <TextFieldInput
-                                name="usename"
+                                name="username"
                                 title="Username"
                                 placeholder="Username"
                                 control={control}
@@ -59,7 +67,7 @@ const Login = () => {
                           },
                           {
                             component: (
-                              <TextFieldInput
+                              <PasswordTextField
                                 name="password"
                                 title="Password"
                                 placeholder="Password"
@@ -67,26 +75,18 @@ const Login = () => {
                               />
                             ),
                           },
-                          //   { component: <TextFieldInput /> },
+                          {
+                            component: (
+                              <div className="text-center w-full px-6 items-center">
+                                <DefaultButton type="submit">
+                                  Sign In
+                                </DefaultButton>
+                              </div>
+                            ),
+                          },
                         ]}
                       />
                     </div>
-                    {/* <div className="min-h-6 w-1/2 mb-0.5 block px-8">
-                      <SliderSwitch label="Remember Me" />
-                    </div> */}
-                    <div className="text-center w-full px-6 items-center">
-                      <DefaultButton>Sign In</DefaultButton>
-                    </div>
-                    {/* <div className="p-6 px-1 pt-0 w-full lg:w-1/2 text-center bg-transparent border-t-0 border-t-solid rounded-b-2xl lg:px-2">
-                      <p className="mx-auto mb-6 leading-normal text-sm">
-                        Don't have an account?
-                        <a
-                          href="../pages/sign-up.html"
-                          className="relative z-10 font-semibold text-transparent bg-gradient-to-tl from-blue-600 to-cyan-400 bg-clip-text">
-                          Sign up
-                        </a>
-                      </p>
-                    </div> */}
                   </div>
                 </div>
                 <div className="relative hidden md:block w-full overflow-hidden">
@@ -98,10 +98,8 @@ const Login = () => {
                       alt="Banner"
                       objectFit="cover"
                       quality={[75, 100]}
-                      // priority // Loads the image immediately
                       className="-z-10 rounded-xl w-full h-full" // Pushes it behind content
                     />
-                    {/* <BackgroundLogin /> */}
                   </div>
                 </div>
               </div>

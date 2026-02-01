@@ -1,4 +1,4 @@
-import styled from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import { Button } from "@mui/material";
 
 const CustomizedButton = styled(Button)(({ theme }) => ({
@@ -50,6 +50,10 @@ const CustomizedButton = styled(Button)(({ theme }) => ({
   },
 }));
 
-export const DefaultButton = ({ children }) => {
-  return <CustomizedButton variant="contained">{children}</CustomizedButton>;
+export const DefaultButton = ({ children, ...props }) => {
+  return (
+    <CustomizedButton variant="contained" {...props}>
+      {children}
+    </CustomizedButton>
+  );
 };
