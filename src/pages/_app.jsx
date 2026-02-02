@@ -14,6 +14,7 @@ import { CacheProvider } from "@emotion/react";
 
 import { muiTheme, openSansFont } from "@/styles/_config";
 import { GlobalModalComponent } from "@/components/organisms/global";
+import { MainLayout } from "@/components/MainLayouts";
 
 // ✅ Create client cache with prepend
 const clientSideEmotionCache = createCache({ key: "css", prepend: true });
@@ -33,6 +34,9 @@ export default function App({
       }),
   );
 
+  const getLayout =
+    Component.getLayout || ((page) => <MainLayout>{page}</MainLayout>);
+
   return (
     <CacheProvider value={emotionCache}>
       <QueryClientProvider client={queryClient}>
@@ -41,7 +45,7 @@ export default function App({
             <ThemeProvider theme={muiTheme}>
               {/* <LocalizationProvider dateAdapter={AdapterDayjs}> */}
               <CssBaseline />
-              <Component {...pageProps} />
+              {getLayout(<Component {...pageProps} />)}
               <GlobalModalComponent />
               {/* <Toaster /> */}
               {/* </LocalizationProvider> */}
