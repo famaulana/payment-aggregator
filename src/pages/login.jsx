@@ -58,9 +58,9 @@ const Login = () => {
                           {
                             component: (
                               <TextFieldInput
-                                name="username"
-                                title="Username"
-                                placeholder="Username"
+                                name="email"
+                                title="Email"
+                                placeholder="Example@email.com"
                                 control={control}
                               />
                             ),
@@ -70,7 +70,7 @@ const Login = () => {
                               <PasswordTextField
                                 name="password"
                                 title="Password"
-                                placeholder="Password"
+                                placeholder="At least 8 character"
                                 control={control}
                               />
                             ),
@@ -110,5 +110,7 @@ const Login = () => {
     </>
   );
 };
+
+Login.getLayout = (page) => <>{page}</>;
 
 export default Login;

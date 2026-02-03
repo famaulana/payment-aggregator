@@ -4,13 +4,23 @@ import { AuthApi } from "../api/auth.service";
 import { useRouter } from "next/navigation";
 
 export const useLogout = () => {
-  const router = useRouter();
   const logoutAction = useAuthStore((state) => state.logout);
 
+  //   return useMutation({
+  //     mutationFn: AuthApi.logout,
+  //     onSuccess: () => {
+  //       logoutAction();
+  //       queryClient.clear();
+  //       window.location.href = "/login";
+  //     },
+  //   });
   return useMutation({
     mutationFn: async () => {
-      logoutAction();
-      queryClient.clear();
+      return new Promise((resolve, reject) => {
+        logoutAction();
+        queryClient.clear();
+        resolve();
+      });
     },
     onSuccess: () => {
       window.location.href = "/login";

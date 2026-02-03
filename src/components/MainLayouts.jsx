@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import {
   Drawer,
   Box,
@@ -8,133 +8,188 @@ import {
   ListItem,
   ListItemButton,
   IconButton,
+  Typography,
+  InputBase,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
+import SearchIcon from "@mui/icons-material/Search";
+import PersonIcon from "@mui/icons-material/Person";
+import SettingsIcon from "@mui/icons-material/Settings";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import Image from "next/image";
+import { useLogout } from "@/features/auth/hooks/useLogout";
+import { DefaultButton } from "./atoms/button/DefaultButton";
 
-const DRAWER_WIDTH = 260;
-
-const NAV_ITEMS = [
-  { label: "Dashboard", href: "/dashboard", icon: "shop" },
-  { label: "Tables", href: "/tables", icon: "office" },
-  { label: "Billing", href: "/billing", icon: "credit-card" },
-  { label: "Profile", href: "/profile", icon: "customer-support" },
-];
+const DRAWER_WIDTH = 270;
 
 export const MainLayout = ({ children }) => {
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const pathName = router.pathname.replace("/", "") || "Dashboard";
 
   const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
 
-  // Content of the sidebar
-  const drawerContent = (
-    <Box className="h-full bg-white p-4">
-      {/* Logo Section */}
-      <div className="flex items-center px-4 py-6">
-        <img src="/img/logo-ct.png" className="h-8 mr-2" alt="logo" />
-        <span className="font-bold text-slate-700">Soft UI Dashboard</span>
-      </div>
-
-      <hr className="h-px mt-0 bg-transparent bg-gradient-to-r from-transparent via-black/40 to-transparent" />
-
-      {/* Navigation List */}
-      <List className="mt-4">
-        {NAV_ITEMS.map((item) => {
-          const isActive = router.pathname === item.href;
-          return (
-            <ListItem key={item.href} disablePadding className="mb-2">
-              <Link href={item.href} className="w-full no-underline">
-                <ListItemButton
-                  selected={isActive}
-                  className={`rounded-xl transition-all duration-200 mx-2 ${
-                    isActive ? "bg-white shadow-soft-xl" : "hover:bg-gray-50"
-                  }`}
-                  sx={{
-                    "&.Mui-selected": { backgroundColor: "white !important" },
-                  }}>
-                  <div
-                    className={`flex h-8 w-8 items-center justify-center rounded-lg mr-3 shadow-soft-2xl ${
-                      isActive
-                        ? "bg-gradient-to-tl from-purple-700 to-pink-500 text-white"
-                        : "bg-white text-slate-700"
-                    }`}>
-                    <i className={`ni ni-${item.icon} text-xs`}></i>
-                  </div>
-                  <span
-                    className={`text-sm ${isActive ? "font-bold text-slate-700" : "text-slate-500"}`}>
-                    {item.label}
-                  </span>
-                </ListItemButton>
-              </Link>
-            </ListItem>
-          );
-        })}
-      </List>
-    </Box>
-  );
-
   return (
-    <Box
-      sx={{ display: "flex", backgroundColor: "#f8f9fa", minHeight: "100vh" }}>
-      {/* Mobile Menu Trigger */}
-      <IconButton
-        onClick={handleDrawerToggle}
-        sx={{
-          position: "fixed",
-          top: 20,
-          left: 20,
-          zIndex: 1200,
-          display: { xl: "none" },
-        }}>
-        <MenuIcon />
-      </IconButton>
+    <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "#f8f9fa" }}>
+      {/* 1. SIDEBAR (DRAWER) */}
+      <Box
+        component="nav"
+        sx={{ width: { xl: DRAWER_WIDTH }, flexShrink: { xl: 0 } }}>
+        {/* Mobile Version */}
+        <Drawer
+          variant="temporary"
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          sx={{
+            display: { xs: "block", xl: "none" },
+            "& .MuiDrawer-paper": {
+              width: DRAWER_WIDTH,
+              boxSizing: "border-box",
+              border: "none",
+            },
+          }}>
+          <SidebarContent router={router} />
+        </Drawer>
 
-      {/* SIDEBAR FOR MOBILE */}
-      <Drawer
-        variant="temporary"
-        open={mobileOpen}
-        onClose={handleDrawerToggle}
-        ModalProps={{ keepMounted: true }} // Better open performance on mobile
-        sx={{
-          display: { xs: "block", xl: "none" },
-          "& .MuiDrawer-paper": {
-            width: DRAWER_WIDTH,
-            border: "none",
-            backgroundColor: "transparent",
-          },
-        }}>
-        {drawerContent}
-      </Drawer>
+        {/* Desktop Version */}
+        <Drawer
+          variant="permanent"
+          sx={{
+            display: { xs: "none", xl: "block" },
+            "& .MuiDrawer-paper": {
+              width: DRAWER_WIDTH,
+              boxSizing: "border-box",
+              border: "none",
+              bgcolor: "transparent",
+              //   p: 2,
+            },
+          }}
+          open>
+          <Box className="h-full rounded-2xl shadow-soft-xl">
+            <SidebarContent router={router} />
+          </Box>
+        </Drawer>
+      </Box>
 
-      {/* SIDEBAR FOR DESKTOP */}
-      <Drawer
-        variant="permanent"
-        sx={{
-          display: { xs: "none", xl: "block" },
-          "& .MuiDrawer-paper": {
-            width: DRAWER_WIDTH,
-            border: "none",
-            p: 2,
-            backgroundColor: "transparent",
-          },
-        }}
-        open>
-        <div className="h-[calc(100vh-32px)] bg-white rounded-2xl shadow-soft-xl overflow-hidden">
-          {drawerContent}
-        </div>
-      </Drawer>
-
-      {/* MAIN CONTENT */}
+      {/* 2. MAIN CONTENT AREA (Sits to the right of Sidebar) */}
       <Box
         component="main"
         sx={{
           flexGrow: 1,
           p: 3,
           width: { xl: `calc(100% - ${DRAWER_WIDTH}px)` },
-          mt: { xs: 8, xl: 0 },
+          minWidth: 0, // Prevents flex-child overflow
         }}>
-        {children}
+        {/* TOP NAVBAR */}
+        <Box className="flex flex-col md:flex-row items-center justify-between mb-6 px-4 py-2 bg-transparent">
+          {/* Breadcrumbs / Title */}
+          <Box>
+            <Typography
+              variant="h6"
+              className="font-bold text-slate-700 capitalize">
+              {pathName}
+            </Typography>
+          </Box>
+
+          {/* Search & Actions */}
+          <Box className="flex items-center space-x-4 mt-4 md:mt-0">
+            {/* Mobile Hamburger Toggle */}
+            <IconButton
+              onClick={handleDrawerToggle}
+              sx={{ display: { xl: "none" } }}>
+              <MenuIcon />
+            </IconButton>
+
+            {/* Search Bar */}
+            <Box className="flex items-center bg-white border border-gray-300 rounded-lg px-2 py-1 shadow-sm">
+              <SearchIcon className="text-gray-400 mr-2" fontSize="small" />
+              <InputBase placeholder="Type here..." className="text-sm" />
+            </Box>
+
+            {/* Icons */}
+            <Box className="flex items-center space-x-2 text-slate-500">
+              <IconButton size="small">
+                <PersonIcon fontSize="small" />
+              </IconButton>
+              <IconButton size="small">
+                <SettingsIcon fontSize="small" />
+              </IconButton>
+              <IconButton size="small">
+                <NotificationsIcon fontSize="small" />
+              </IconButton>
+            </Box>
+          </Box>
+        </Box>
+
+        {/* PAGE CONTENT */}
+        <Box className="w-full">{children}</Box>
       </Box>
+    </Box>
+  );
+};
+
+// Extracted Sidebar Content to keep code clean
+const SidebarContent = ({ router }) => {
+  const { mutate: logout } = useLogout();
+
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        height: "100%",
+      }}
+      className="p-4">
+      <div>
+        <div className="flex items-center px-4 py-6">
+          <Image
+            src={"/images/logo.png"}
+            width={48}
+            height={48}
+            alt="Logo"
+            objectFit="contain"
+          />
+          <span className="font-semibold text-[#344767]">
+            Juara Digital Platform
+          </span>
+        </div>
+        <hr className="h-px mb-4 bg-transparent bg-linear-to-r from-transparent via-black/40 to-transparent border-0" />
+        <span className="text-slate-600 font-semibold text-sm px-4">
+          MAIN MENU
+        </span>
+        <List>
+          {["Dashboard", "Tables", "Billing", "Profile"].map((text) => {
+            const href = `/${text.toLowerCase().replace(" ", "-")}`;
+            const isActive = router.pathname === href;
+            return (
+              <ListItem key={text} disablePadding className="mb-2">
+                <Link href={href} className="w-full no-underline">
+                  <ListItemButton
+                    selected={isActive}
+                    className={`rounded-xl mx-2 ${isActive ? "bg-white shadow-soft-xl" : ""}`}
+                    sx={{
+                      "&.Mui-selected": {
+                        bgcolor: "white !important",
+                        borderRadius: "8px",
+                      },
+                    }}>
+                    <div
+                      className={`w-8 h-8 flex items-center justify-center rounded-lg mr-3 ${isActive ? "bg-linear-to-tl from-purple-700 to-pink-500 text-white" : "bg-white shadow-soft-2xl"}`}>
+                      <span className="text-[10px]">●</span>
+                    </div>
+                    <Typography
+                      className={`text-sm ${isActive ? "font-bold text-slate-700" : "text-slate-500"}`}>
+                      {text}
+                    </Typography>
+                  </ListItemButton>
+                </Link>
+              </ListItem>
+            );
+          })}
+        </List>
+      </div>
+      <DefaultButton onClick={logout}>Logout</DefaultButton>
     </Box>
   );
 };
