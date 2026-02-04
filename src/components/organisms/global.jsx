@@ -1,97 +1,72 @@
-// import { useImperativeHandle, useState, useEffect, useRef } from "react";
+import React from "react";
+import {
+  Dialog,
+  DialogContent,
+  IconButton,
+  Box,
+  Zoom,
+  Typography,
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import { useModalStore } from "@/store/useModalStore";
 
-// const useRegisterModal = (ModalUtil, modalRef, { onShow, onHide }) => {
-//   useEffect(() => {
-//     ModalUtil.setModalRef(modalRef);
-//   }, [ModalUtil, modalRef]);
+// Import your specific modal views
+import SuccessModal from "./modal/Success";
 
-//   useImperativeHandle(
-//     modalRef,
-//     () => ({
-//       show: onShow,
-//       hide: onHide,
-//     }),
-//     [onHide, onShow],
-//   );
-// };
+const MODAL_COMPONENTS = {
+  SUCCESS: SuccessModal,
+};
 
 export const GlobalModalComponent = () => {
-  //   const [modalSuccessProps, setModalSuccessProps] = useState({
-  //     open: false,
-  //     description: "",
-  //     onConfirm: () => {},
-  //     image: "",
-  //   });
-  //   const [modalErrorProps, setModalErrorProps] = useState({
-  //     open: false,
-  //     description: "",
-  //     onConfirm: () => {},
-  //   });
-  //   const [modalConfirmProps, setModalConfirmProps] = useState({
-  //     open: false,
-  //     description: "",
-  //     onConfirm: () => {},
-  //     maxWidth: "350px",
-  //   });
-  //   const [modalLoadingProps, setModalLoadingProps] = useState({
-  //     open: false,
-  //   });
+  const { isOpen, view, data, closeModal } = useModalStore();
 
-  //   const modalConfirmRef = useRef();
+  // Get the component to render based on the store's view string
+  const SpecificModal = MODAL_COMPONENTS[view];
 
-  //   const _closeModalSuccess = () => setModalSuccessProps({ open: false });
-  //   const _closeModalError = () => setModalErrorProps({ open: false });
-  //   const _closeModalConfirm = () => setModalConfirmProps({ open: false });
-  //   const _closeModalLoading = () => setModalLoadingProps({ open: false });
+  return (
+    <Dialog
+      open={isOpen}
+      onClose={closeModal}
+      slots={{
+        transition: Zoom,
+      }}
+      slotProps={{
+        paper: {
+          sx: {
+            borderRadius: "1.5rem", // rounded-3xl
+            padding: "1rem",
+            boxShadow: "0 20px 27px 0 rgba(0, 0, 0, 0.05)",
+            backgroundImage: "none", // Fix for Dark Mode if enabled
+          },
+        },
+      }}
+      maxWidth="xs" // Options: 'xs', 'sm', 'md', etc.
+      fullWidth
+      // This is where we apply the Soft UI aesthetic
+    >
+      <Box className="relative">
+        {/* Close Button */}
+        <IconButton
+          onClick={closeModal}
+          size="small"
+          sx={{
+            position: "absolute",
+            right: 0,
+            top: 0,
+            color: "grey.400",
+            "&:hover": { color: "grey.700" },
+          }}>
+          <CloseIcon fontSize="small" />
+        </IconButton>
 
-  //   useRegisterModal(ModalSuccessUtil, modalSuccessRef, {
-  //     onShow: (message, onConfirm, title, image) =>
-  //       setModalSuccessProps({
-  //         open: true,
-  //         description: message,
-  //         onConfirm,
-  //         title: title,
-  //         image,
-  //       }),
-  //     onHide: _closeModalSuccess,
-  //   });
-
-  //   useRegisterModal(ModalErrorUtil, modalErrorRef, {
-  //     onShow: (message, onConfirm, title) =>
-  //       setModalErrorProps({
-  //         open: true,
-  //         description: message,
-  //         onConfirm,
-  //         title: title,
-  //       }),
-  //     onHide: _closeModalError,
-  //   });
-
-  //   useRegisterModal(ModalConfirmUtil, modalConfirmRef, {
-  //     onShow: (message, onConfirm, title, onCancel, maxWidth) =>
-  //       setModalConfirmProps({
-  //         open: true,
-  //         description: message,
-  //         onConfirm,
-  //         title: title,
-  //         maxWidth: maxWidth || "350px",
-  //       }),
-  //     onHide: _closeModalConfirm,
-  //   });
-
-  //   useRegisterModal(ModalLoadingUtil, modalLoadingRef, {
-  //     onShow: () => setModalLoadingProps({ open: true }),
-  //     onHide: _closeModalLoading,
-  //   });
-
-  //   return (
-  //     <>
-  //       <ModalSuccess onClose={_closeModalSuccess} {...modalSuccessProps} />
-  //       <ModalError onClose={_closeModalError} {...modalErrorProps} />
-  //       <ModalConfirmation onClose={_closeModalConfirm} {...modalConfirmProps} />
-  //       <ModalLoading onClose={_closeModalLoading} {...modalLoadingProps} />
-  //     </>
-  //   );
-  // };
-  return <>global</>;
+        <DialogContent sx={{ p: 3 }}>
+          {SpecificModal ? (
+            <SpecificModal data={data} />
+          ) : (
+            <Typography>Modal content not found.</Typography>
+          )}
+        </DialogContent>
+      </Box>
+    </Dialog>
+  );
 };
