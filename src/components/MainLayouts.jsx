@@ -19,13 +19,20 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import Image from "next/image";
 import { useLogout } from "@/features/auth/hooks/useLogout";
 import { DefaultButton } from "./atoms/button/DefaultButton";
+import {
+  CreditCard,
+  LocalPostOffice,
+  Settings,
+  Shop,
+} from "@mui/icons-material";
 
-const DRAWER_WIDTH = 270;
+const DRAWER_WIDTH = 300;
 
 export const MainLayout = ({ children }) => {
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathName = router.pathname.replace("/", "") || "Dashboard";
+  const modifiedPathName = pathName.replace("-", " ") || "Dashboard";
 
   const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
 
@@ -87,7 +94,7 @@ export const MainLayout = ({ children }) => {
             <Typography
               variant="h6"
               className="font-bold text-slate-700 capitalize">
-              {pathName}
+              {modifiedPathName}
             </Typography>
           </Box>
 
@@ -159,11 +166,16 @@ const SidebarContent = ({ router }) => {
           MAIN MENU
         </span>
         <List>
-          {["Dashboard", "Tables", "Billing", "Profile"].map((text) => {
-            const href = `/${text.toLowerCase().replace(" ", "-")}`;
+          {[
+            { icon: <Shop />, text: "Dashboard" },
+            { icon: <LocalPostOffice />, text: "Transaction" },
+            { icon: <Settings />, text: "MDR Settings" },
+            { icon: <CreditCard />, text: "Settlement" },
+          ].map((item) => {
+            const href = `/${item.text.toLowerCase().replace(" ", "-")}`;
             const isActive = router.pathname === href;
             return (
-              <ListItem key={text} disablePadding className="mb-2">
+              <ListItem key={item.text} disablePadding className="mb-2">
                 <Link href={href} className="w-full no-underline">
                   <ListItemButton
                     selected={isActive}
@@ -175,18 +187,63 @@ const SidebarContent = ({ router }) => {
                       },
                     }}>
                     <div
-                      className={`w-8 h-8 flex items-center justify-center rounded-lg mr-3 ${isActive ? "bg-linear-to-tl from-purple-700 to-pink-500 text-white" : "bg-white shadow-soft-2xl"}`}>
-                      <span className="text-[10px]">●</span>
+                      className={`w-8 h-8 flex items-center justify-center rounded-lg mr-3 ${isActive ? "bg-linear-to-tl from-purple-700 to-pink-500 text-white" : "bg-white shadow-soft-2xl"} shadow-lg/12`}>
+                      <span className="text-[10px]">{item.icon}</span>
                     </div>
                     <Typography
-                      className={`text-sm ${isActive ? "font-bold text-slate-700" : "text-slate-500"}`}>
-                      {text}
+                      sx={{
+                        ...(isActive
+                          ? { fontWeight: 700, color: "#344767" }
+                          : {}),
+                      }}
+                      className={`text-sm ${isActive ? "font-bold text-[#344767]" : "text-slate-500"}`}>
+                      {item.text}
                     </Typography>
                   </ListItemButton>
                 </Link>
               </ListItem>
             );
           })}
+        </List>
+        <span className="text-slate-600 font-semibold text-sm px-4">
+          SETTINGS
+        </span>
+        <List>
+          {["Account Management", "Merchant Management", "Logs & Audit"].map(
+            (text) => {
+              const href = `/${text.toLowerCase().replace(" ", "-")}`;
+              const isActive = router.pathname === href;
+              return (
+                <ListItem key={text} disablePadding className="mb-2">
+                  <Link href={href} className="w-full no-underline">
+                    <ListItemButton
+                      selected={isActive}
+                      className={`rounded-xl mx-2 ${isActive ? "bg-white shadow-soft-xl" : ""}`}
+                      sx={{
+                        "&.Mui-selected": {
+                          bgcolor: "white !important",
+                          borderRadius: "8px",
+                        },
+                      }}>
+                      <div
+                        className={`w-8 h-8 flex items-center justify-center rounded-lg mr-3 ${isActive ? "bg-linear-to-tl from-purple-700 to-pink-500 text-white" : "bg-white shadow-soft-2xl"} shadow-lg/12`}>
+                        <span className="text-[10px]">●</span>
+                      </div>
+                      <Typography
+                        sx={{
+                          ...(isActive
+                            ? { fontWeight: 700, color: "#344767" }
+                            : {}),
+                        }}
+                        className={`text-sm ${isActive ? "font-bold text-[#344767]" : "text-slate-500"}`}>
+                        {text}
+                      </Typography>
+                    </ListItemButton>
+                  </Link>
+                </ListItem>
+              );
+            },
+          )}
         </List>
       </div>
       <DefaultButton onClick={logout}>Logout</DefaultButton>
