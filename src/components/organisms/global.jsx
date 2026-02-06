@@ -13,10 +13,12 @@ import { useModalStore } from "@/store/useModalStore";
 // Import your specific modal views
 import SuccessModal from "./modal/Success";
 import CreateUserModal from "./modal/CreateUser";
+import LoadingModal from "./modal/Loading";
 
 const MODAL_COMPONENTS = {
   SUCCESS: SuccessModal,
   CREATE_USER: CreateUserModal,
+  LOADING: LoadingModal,
 };
 
 export const GlobalModalComponent = () => {
@@ -39,7 +41,7 @@ export const GlobalModalComponent = () => {
           },
         },
       }}
-      maxWidth={width}
+      maxWidth={view == "LOADING" ? "xs" : width}
       fullWidth>
       {/* HEADER SECTION */}
       <Box className="flex items-center justify-between px-6 pt-4">

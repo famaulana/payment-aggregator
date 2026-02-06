@@ -6,23 +6,11 @@ import { useRouter } from "next/navigation";
 export const useLogout = () => {
   const logoutAction = useAuthStore((state) => state.logout);
 
-  //   return useMutation({
-  //     mutationFn: AuthApi.logout,
-  //     onSuccess: () => {
-  //       logoutAction();
-  //       queryClient.clear();
-  //       window.location.href = "/login";
-  //     },
-  //   });
   return useMutation({
-    mutationFn: async () => {
-      return new Promise((resolve, reject) => {
-        logoutAction();
-        queryClient.clear();
-        resolve();
-      });
-    },
+    mutationFn: AuthApi.logout,
     onSuccess: () => {
+      logoutAction();
+      queryClient.clear();
       window.location.href = "/login";
     },
   });

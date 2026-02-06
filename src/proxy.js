@@ -15,7 +15,7 @@ export const config = {
 };
 
 export default function middleware(req) {
-  const token = req.cookies.get("auth_token")?.value;
+  const token = req.cookies.get("access_token")?.value;
   const isLoginPage = req.nextUrl.pathname === "/login";
 
   // only redirect to dashboard if the token is actually valid.
@@ -27,7 +27,9 @@ export default function middleware(req) {
   if (!token && !isLoginPage) {
     const response = NextResponse.redirect(new URL("/login", req.url));
     // Force clear just in case
-    response.cookies.set("auth_token", "", { path: "/", maxAge: 0 });
+    response.cookies.delete("access_token");
+    response.cookies.delete("refresh_token");
+    response.cookies.delete("token_type");
     return response;
   }
 
@@ -45,9 +47,9 @@ export default function middleware(req) {
   /* === PROTECTED ROUTE === */
   const response = NextResponse.redirect(new URL("/login", req.url));
 
-  response.cookies.delete("token");
-  response.cookies.delete("username");
-  response.cookies.delete("accessMenu");
+  response.cookies.delete("access_token");
+  response.cookies.delete("refresh_token");
+  response.cookies.delete("token_type");
 
   return response;
 }

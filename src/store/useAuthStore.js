@@ -4,20 +4,24 @@ import { setCookie, deleteCookie, getCookie } from "cookies-next";
 export const useAuthStore = create((set) => ({
   // Initialize from cookie if available (helps with hydration)
   user: null,
-  token: typeof window !== "undefined" ? getCookie("auth_token") : null,
+  token: typeof window !== "undefined" ? getCookie("access_token") : null,
 
-  setSession: (user, token) => {
+  setSession: (user, token, tokenType, refresh, timeout) => {
     set({ user, token });
     // Save to cookie for server-side access (expires in 7 days)
-    setCookie("auth_token", token, {
+    setCookie("access_token", token, {
       path: "/", // 👈 CRITICAL: Must be root path
-      maxAge: 60 * 60 * 24 * 7,
+      maxAge: timeout,
     });
+    setCookie("refresh_token", refresh);
+    setCookie("token_type", tokenType);
   },
 
   logout: () => {
     set({ user: null, token: null });
-    deleteCookie("auth_token", { path: "/" });
+    deleteCookie("access_token", { path: "/" });
+    deleteCookie("refresh_token");
+    deleteCookie("token_type");
     window.location.href = "/login"; // Force a clean redirect
   },
 }));

@@ -7,9 +7,12 @@ import Image from "next/image";
 import { DefaultButton } from "@/components/atoms/button/DefaultButton";
 import { PasswordTextField } from "@/components/molecules/form-inputs/PasswordTextField";
 import { useLogin } from "@/features/auth/hooks/useLogin";
+import { useModalStore } from "@/store/useModalStore";
 
 const Login = () => {
   const { mutate: login } = useLogin();
+
+  const { openModal, closeModal } = useModalStore();
 
   const methods = useForm({
     mode: "all",
@@ -19,7 +22,9 @@ const Login = () => {
   const { control } = methods;
 
   const submit = (value) => {
+    openModal("LOADING");
     login(value);
+    setTimeout(() => closeModal(), 1000);
   };
 
   return (
