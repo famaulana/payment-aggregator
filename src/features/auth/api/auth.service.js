@@ -5,7 +5,7 @@ export const AuthApi = {
     const { data } = await apiClient.post("/v1/dashboard/login", credentials);
     return data; // Expecting { user: {...}, token: "..." }
   },
-  logout: async (id) => {
+  logout: async () => {
     const { data } = await apiClient.post("/v1/dashboard/logout");
     return data;
   },

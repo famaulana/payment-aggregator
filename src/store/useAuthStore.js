@@ -22,6 +22,8 @@ export const useAuthStore = create((set) => ({
     deleteCookie("access_token", { path: "/" });
     deleteCookie("refresh_token");
     deleteCookie("token_type");
-    window.location.href = "/login"; // Force a clean redirect
+    setTimeout(() => {
+      window.location.href = "/login"; // Force a clean redirect
+    });
   },
 }));

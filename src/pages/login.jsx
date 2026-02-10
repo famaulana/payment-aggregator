@@ -22,9 +22,7 @@ const Login = () => {
   const { control } = methods;
 
   const submit = (value) => {
-    openModal("LOADING");
     login(value);
-    setTimeout(() => closeModal(), 1000);
   };
 
   return (

@@ -9,9 +9,11 @@ import { PasswordTextField } from "@/components/molecules/form-inputs/PasswordTe
 import { DefaultButton } from "@/components/atoms/button/DefaultButton";
 import { FormBuilder } from "../builder";
 import { RHFSelect } from "@/components/molecules/form-inputs/SelectDefault";
+import { useCreateUser } from "@/features/users/hooks/useCreateUser";
 
 const CreateUserModal = ({ data }) => {
   const closeModal = useModalStore((s) => s.closeModal);
+  const { mutate: createUser } = useCreateUser();
   const isEdit = !!data?.id; // If an ID is passed, we are editing
 
   const options = [
@@ -28,12 +30,9 @@ const CreateUserModal = ({ data }) => {
   const { control } = methods;
 
   const handleSubmit = (value) => {
-    const formData = new FormData(event.currentTarget);
-    const payload = Object.fromEntries(formData.entries());
+    createUser(value);
 
-    console.log("Submitting:", payload);
-    // Add your mutation logic here (e.g., mutate(payload))
-    closeModal();
+    // closeModal();
   };
 
   return (

@@ -1,14 +1,20 @@
 import { DefaultButton } from "@/components/atoms/button/DefaultButton";
 import { ControlledSelect } from "@/components/molecules/form-inputs/SelectDefault";
 import { TableCardWithFilter } from "@/components/molecules/tables/TableCardWithFilter";
+import { useGetUser } from "@/features/users/hooks/useGetUsers";
 import { useModalStore } from "@/store/useModalStore";
 import { Box, Button, Typography } from "@mui/material";
+import { useState } from "react";
 
-const SettingRole = () => {
+const AccountManagement = () => {
   const { openModal } = useModalStore();
+  const [payload, setPayload] = useState({});
+
+  const { data: listUsers, isLoading } = useGetUser(payload);
+
   const columns = [
     {
-      id: "userid",
+      id: "id",
       label: "User ID",
       // render: (row) => (
       //   // <Box>
@@ -17,7 +23,7 @@ const SettingRole = () => {
       // ),
     },
     {
-      id: "name",
+      id: "full_name",
       label: "Name",
       // render: (row) => (
       //   <Box>
@@ -37,30 +43,30 @@ const SettingRole = () => {
     {
       id: "role",
       label: "Role",
-      // render: (row) => (
-      //   <Box>
-      //     <Typography>{row.role}</Typography>
-      //   </Box>
-      // ),
+      render: (row) => (
+        // <Box>
+        <Typography className="capitalize">{row.role}</Typography>
+        // </Box>
+      ),
     },
     {
       id: "status",
       label: "Status",
       render: (row) =>
         // <Box>
-        row.status == "INACTIVE" ? (
-          <Typography className="font-bold text-transparent bg-clip-text bg-linear-to-tl from-[#973D3D] to-[#E42D5D]">
+        row.status == "inactive" ? (
+          <Typography className="font-bold capitalize text-transparent bg-clip-text bg-linear-to-tl from-[#973D3D] to-[#E42D5D]">
             {row.status}
           </Typography>
         ) : (
-          <Typography className="font-bold text-transparent bg-clip-text bg-linear-to-tl from-[#3D9743] to-[#005607]">
+          <Typography className="font-bold capitalize text-transparent bg-clip-text bg-linear-to-tl from-[#3D9743] to-[#005607]">
             {row.status}
           </Typography>
         ),
       // </Box>
     },
     {
-      id: "latest_update",
+      id: "updated_at",
       label: "Latest Update",
       // render: (row) => (
       //   <Box>
@@ -73,12 +79,15 @@ const SettingRole = () => {
       label: "More Action",
       render: (row) => (
         <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <DefaultButton sx={{ marginTop: 0 }}>Edit</DefaultButton>
+          <DefaultButton colorType="success" sx={{ marginTop: 0 }}>
+            Edit
+          </DefaultButton>
           <DefaultButton sx={{ marginTop: 0 }}>View Details</DefaultButton>
         </Box>
       ),
     },
   ];
+
   const data = [
     {
       userid: "User-001",
@@ -97,24 +106,43 @@ const SettingRole = () => {
       latest_update: "10 January 2029",
     },
   ];
-  const options = [
-    { label: "All Role", value: "all role" },
-    { label: "Malang", value: "malang" },
-    { label: "Malang", value: "malang" },
+
+  const roleOptions = [
+    { label: "All Role", value: "" },
+    { label: "Client", value: "client" },
+    { label: "Headquarter", value: "headquarter" },
+    { label: "Merchant", value: "Merchant" },
   ];
-  const options2 = [
-    { label: "All Status", value: "all status" },
-    { label: "Malang", value: "malang" },
-    { label: "Malang", value: "malang" },
+  const statusOptions = [
+    { label: "All Status", value: "" },
+    { label: "Active", value: "active" },
+    { label: "Inactive", value: "inactive" },
   ];
 
   const handleCreateModal = () => {
     openModal("CREATE_USER", { header: "Create Account" }, "sm");
   };
+
+  const handleChangeRole = (e) => {
+    setPayload({ ...payload, role: e.target.value });
+  };
+
+  const handleChangeStatus = (e) => {
+    setPayload({ ...payload, status: e.target.value });
+  };
+
   const FilterComponent = () => (
     <div className="flex space-x-4">
-      <ControlledSelect options={options} value="all role" />
-      <ControlledSelect options={options2} value="all status" />
+      <ControlledSelect
+        onChange={handleChangeRole}
+        options={roleOptions}
+        value={payload?.role ?? ""}
+      />
+      <ControlledSelect
+        onChange={handleChangeStatus}
+        options={statusOptions}
+        value={payload?.status ?? ""}
+      />
       <Button
         variant="contained"
         onClick={handleCreateModal}
@@ -130,10 +158,10 @@ const SettingRole = () => {
         title="Account List"
         renderFilter={() => <FilterComponent />}
         columns={columns}
-        data={data}
+        data={listUsers?.data ?? data}
       />
     </>
   );
 };
 
-export default SettingRole;
+export default AccountManagement;

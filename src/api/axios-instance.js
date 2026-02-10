@@ -14,6 +14,11 @@ apiClient.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `${tokenType} ${token}`;
   }
+
+  if (!config.url.includes("/dashboard/refresh")) {
+    useModalStore.getState().openModal("LOADING", null, "xs");
+  }
+
   return config;
 });
 
@@ -29,7 +34,10 @@ const processQueue = (error, token = null) => {
 };
 
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    useModalStore.getState().closeModal();
+    return response;
+  },
   async (error) => {
     const originalRequest = error.config;
 
@@ -78,11 +86,16 @@ apiClient.interceptors.response.use(
         })
         .then(({ data }) => {
           const newToken = data.access_token;
+          const refreshToken = data.refresh_token;
+          const tokenType = data.token_type;
+
           setCookie("access_token", newToken);
+          setCookie("refresh_token", refreshToken);
+          setCookie("token_type", tokenType);
 
           apiClient.defaults.headers.common["Authorization"] =
-            `Bearer ${newToken}`;
-          originalRequest.headers.Authorization = `Bearer ${newToken}`;
+            `${tokenType} ${newToken}`;
+          originalRequest.headers.Authorization = `${tokenType} ${newToken}`;
 
           processQueue(null, newToken);
           resolve(apiClient(originalRequest));
