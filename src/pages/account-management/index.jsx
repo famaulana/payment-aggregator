@@ -4,56 +4,52 @@ import { TableCardWithFilter } from "@/components/molecules/tables/TableCardWith
 import { useGetUser } from "@/features/users/hooks/useGetUsers";
 import { useModalStore } from "@/store/useModalStore";
 import { Box, Button, Typography } from "@mui/material";
+import { useRouter } from "next/router";
 import { useState } from "react";
 
 const AccountManagement = () => {
   const { openModal } = useModalStore();
+  const router = useRouter();
+
   const [payload, setPayload] = useState({});
 
-  const { data: listUsers, isLoading } = useGetUser(payload);
+  const { data: listUsers, refetch } = useGetUser(payload);
+
+  const onDetail = (id) => {
+    router.push(
+      {
+        pathname: `${router.pathname}/detail`,
+        query: { id: id },
+      },
+      undefined,
+      { shallow: true },
+    );
+  };
 
   const columns = [
     {
       id: "id",
       label: "User ID",
-      // render: (row) => (
-      //   // <Box>
-      //     <Typography>{row.userid}</Typography>
-      //   // </Box>
-      // ),
     },
     {
       id: "full_name",
       label: "Name",
-      // render: (row) => (
-      //   <Box>
-      //     <Typography>{row.name}</Typography>
-      //   </Box>
-      // ),
     },
     {
       id: "email",
       label: "Email",
-      // render: (row) => (
-      //   <Box>
-      //     <Typography>{row.name}</Typography>
-      //   </Box>
-      // ),
     },
     {
       id: "role",
       label: "Role",
       render: (row) => (
-        // <Box>
         <Typography className="capitalize">{row.role}</Typography>
-        // </Box>
       ),
     },
     {
       id: "status",
       label: "Status",
       render: (row) =>
-        // <Box>
         row.status == "inactive" ? (
           <Typography className="font-bold capitalize text-transparent bg-clip-text bg-linear-to-tl from-[#973D3D] to-[#E42D5D]">
             {row.status}
@@ -63,16 +59,10 @@ const AccountManagement = () => {
             {row.status}
           </Typography>
         ),
-      // </Box>
     },
     {
       id: "updated_at",
       label: "Latest Update",
-      // render: (row) => (
-      //   <Box>
-      //     <Typography>{row.latest_update}</Typography>
-      //   </Box>
-      // ),
     },
     {
       id: "action",
@@ -82,7 +72,11 @@ const AccountManagement = () => {
           <DefaultButton colorType="success" sx={{ marginTop: 0 }}>
             Edit
           </DefaultButton>
-          <DefaultButton sx={{ marginTop: 0 }}>View Details</DefaultButton>
+          <DefaultButton
+            onClick={onDetail.bind(this, row.id)}
+            sx={{ marginTop: 0 }}>
+            View Details
+          </DefaultButton>
         </Box>
       ),
     },
@@ -113,6 +107,7 @@ const AccountManagement = () => {
     { label: "Headquarter", value: "headquarter" },
     { label: "Merchant", value: "Merchant" },
   ];
+
   const statusOptions = [
     { label: "All Status", value: "" },
     { label: "Active", value: "active" },

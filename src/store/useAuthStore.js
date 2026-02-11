@@ -8,6 +8,7 @@ export const useAuthStore = create((set) => ({
 
   setSession: (user, token, tokenType, refresh, timeout) => {
     set({ user, token });
+    setCookie("user", user);
     // Save to cookie for server-side access (expires in 7 days)
     setCookie("access_token", token, {
       path: "/", // 👈 CRITICAL: Must be root path

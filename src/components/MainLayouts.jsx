@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import {
@@ -24,8 +24,12 @@ import {
   LocalPostOffice,
   Settings,
   Shop,
+  Shop2,
 } from "@mui/icons-material";
 import RoleProtector from "./RoleGuard";
+import { useAuthStore } from "@/store/useAuthStore";
+import { MASTER_MAIN_MENU, MASTER_SETTINGS } from "@/utils/constants";
+import { getCookie } from "cookies-next";
 
 const DRAWER_WIDTH = 300;
 
@@ -33,7 +37,8 @@ export const MainLayout = ({ children }) => {
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathName = router.pathname.replace("/", "") || "Dashboard";
-  const modifiedPathName = pathName.replace("-", " ") || "Dashboard";
+  const spacedPathName = pathName.replace("-", " ") || "Dashboard";
+  const modifiedPathName = spacedPathName.replace("/", " > ");
 
   const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
 
@@ -140,7 +145,42 @@ export const MainLayout = ({ children }) => {
 
 // Extracted Sidebar Content to keep code clean
 const SidebarContent = ({ router }) => {
+  const [mounted, setMounted] = useState(false);
+  const [user, setUser] = useState(null);
   const { mutate: logout } = useLogout();
+
+  // 1. Wait for Mount to avoid Hydration Error
+  useEffect(() => {
+    const userRaw = getCookie("user");
+    if (userRaw) {
+      try {
+        setUser(JSON.parse(userRaw));
+      } catch (e) {
+        console.error("Failed to parse user cookie", e);
+      }
+    }
+    setMounted(true);
+  }, []);
+
+  // 2. Compute menus only if we have a user and are mounted
+  const mainMenuList =
+    mounted && user?.permissions
+      ? MASTER_MAIN_MENU.filter((item) =>
+          user.permissions.some((p) => p.includes(item.key)),
+        )
+      : [];
+
+  const settingsList =
+    mounted && user?.permissions
+      ? MASTER_SETTINGS.filter((item) =>
+          user.permissions.some((p) => p.includes(item.key)),
+        )
+      : [];
+
+  // 3. Prevent the "Flash of Wrong Content"
+  if (!mounted) {
+    return <div className="p-4">Loading Sidebar...</div>;
+  }
 
   return (
     <Box
@@ -158,100 +198,95 @@ const SidebarContent = ({ router }) => {
             width={48}
             height={48}
             alt="Logo"
-            objectFit="contain"
+            style={{ objectFit: "contain" }} // Using style for Next.js 13+ compatibility
           />
-          <span className="font-semibold text-[#344767]">
+          <span className="font-semibold text-[#344767] ml-2">
             Juara Digital Platform
           </span>
         </div>
+
         <hr className="h-px mb-4 bg-transparent bg-linear-to-r from-transparent via-black/40 to-transparent border-0" />
-        <span className="text-slate-600 font-semibold text-sm px-4">
-          MAIN MENU
-        </span>
-        <List>
-          {[
-            { icon: <Shop />, text: "Dashboard" },
-            { icon: <LocalPostOffice />, text: "Transaction" },
-            { icon: <Settings />, text: "MDR Settings" },
-            { icon: <CreditCard />, text: "Settlement" },
-          ].map((item) => {
-            const href = `/${item.text.toLowerCase().replace(" ", "-")}`;
-            const isActive = router.pathname === href;
-            return (
-              <ListItem key={item.text} disablePadding className="mb-2">
-                <Link href={href} className="w-full no-underline">
-                  <ListItemButton
-                    selected={isActive}
-                    className={`rounded-xl mx-2 ${isActive ? "bg-white shadow-soft-xl" : ""}`}
-                    sx={{
-                      "&.Mui-selected": {
-                        bgcolor: "white !important",
-                        borderRadius: "8px",
-                      },
-                    }}>
-                    <div
-                      className={`w-8 h-8 flex items-center justify-center rounded-lg mr-3 ${isActive ? "bg-linear-to-tl from-purple-700 to-pink-500 text-white" : "bg-white shadow-soft-2xl"} shadow-lg/12`}>
-                      <span className="text-[10px]">{item.icon}</span>
-                    </div>
-                    <Typography
-                      sx={{
-                        ...(isActive
-                          ? { fontWeight: 700, color: "#344767" }
-                          : {}),
-                      }}
-                      className={`text-sm ${isActive ? "font-bold text-[#344767]" : "text-slate-500"}`}>
-                      {item.text}
-                    </Typography>
-                  </ListItemButton>
-                </Link>
-              </ListItem>
-            );
-          })}
-        </List>
-        <span className="text-slate-600 font-semibold text-sm px-4">
-          SETTINGS
-        </span>
-        <List>
-          {[
-            { icon: <PersonIcon />, text: "Account Management" },
-            { icon: <LocalPostOffice />, text: "Merchant Management" },
-            { icon: <Settings />, text: "Logs & Audit" },
-          ].map((item) => {
-            const href = `/${item.text.toLowerCase().replace(" ", "-")}`;
-            const isActive = router.pathname === href;
-            return (
-              <ListItem key={item.text} disablePadding className="mb-2">
-                <Link href={href} className="w-full no-underline">
-                  <ListItemButton
-                    selected={isActive}
-                    className={`rounded-xl mx-2 ${isActive ? "bg-white shadow-soft-xl" : ""}`}
-                    sx={{
-                      "&.Mui-selected": {
-                        bgcolor: "white !important",
-                        borderRadius: "8px",
-                      },
-                    }}>
-                    <div
-                      className={`w-8 h-8 flex items-center justify-center rounded-lg mr-3 ${isActive ? "bg-linear-to-tl from-purple-700 to-pink-500 text-white" : "bg-white shadow-soft-2xl"} shadow-lg/12`}>
-                      <span className="text-[10px]">{item.icon}</span>
-                    </div>
-                    <Typography
-                      sx={{
-                        ...(isActive
-                          ? { fontWeight: 700, color: "#344767" }
-                          : {}),
-                      }}
-                      className={`text-sm ${isActive ? "font-bold text-[#344767]" : "text-slate-500"}`}>
-                      {item.text}
-                    </Typography>
-                  </ListItemButton>
-                </Link>
-              </ListItem>
-            );
-          })}
-        </List>
+
+        {/* --- MAIN MENU --- */}
+        {mainMenuList.length > 0 && (
+          <>
+            <span className="text-slate-600 font-semibold text-sm px-4 uppercase">
+              Main Menu
+            </span>
+            <List>
+              {mainMenuList.map((item) => {
+                const href = `/${item.text.toLowerCase().replace(/\s+/g, "-")}`;
+                const isActive = router.pathname === href;
+                return (
+                  <SidebarItem
+                    key={item.text}
+                    item={item}
+                    isActive={isActive}
+                    href={href}
+                  />
+                );
+              })}
+            </List>
+          </>
+        )}
+
+        {/* --- SETTINGS --- */}
+        {settingsList.length > 0 && (
+          <>
+            <span className="text-slate-600 font-semibold text-sm px-4 uppercase mt-4 block">
+              Settings
+            </span>
+            <List>
+              {settingsList.map((item) => {
+                const href = `/${item.text.toLowerCase().replace(/\s+/g, "-")}`;
+                const isActive = router.pathname === href;
+                return (
+                  <SidebarItem
+                    key={item.text}
+                    item={item}
+                    isActive={isActive}
+                    href={href}
+                  />
+                );
+              })}
+            </List>
+          </>
+        )}
       </div>
-      <DefaultButton onClick={logout}>Logout</DefaultButton>
+
+      <DefaultButton onClick={logout} className="mt-auto">
+        Logout
+      </DefaultButton>
     </Box>
   );
 };
+
+// Sub-component to clean up your map functions
+const SidebarItem = ({ item, isActive, href }) => (
+  <ListItem disablePadding className="mb-2">
+    <Link href={href} className="w-full no-underline">
+      <ListItemButton
+        selected={isActive}
+        className={`rounded-xl mx-2 transition-all ${isActive ? "bg-white shadow-md" : ""}`}
+        sx={{
+          "&.Mui-selected": {
+            bgcolor: "white !important",
+            borderRadius: "8px",
+          },
+        }}>
+        <div
+          className={`w-8 h-8 flex items-center justify-center rounded-lg mr-3 ${
+            isActive
+              ? "bg-linear-to-tl from-purple-700 to-pink-500 text-white"
+              : "bg-white shadow-sm border border-gray-100"
+          }`}>
+          <span className="text-[10px]">{item.icon}</span>
+        </div>
+        <Typography
+          className={`text-sm ${isActive ? "font-bold text-[#344767]" : "text-slate-500"}`}>
+          {item.text}
+        </Typography>
+      </ListItemButton>
+    </Link>
+  </ListItem>
+);

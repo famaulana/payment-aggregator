@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { Switch } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Switch, Box } from "@mui/material"; // Added Box for layout
 import { styled } from "@mui/material/styles";
+import { TextLabel } from "@/components/atoms/typography/TextLabel";
 
 const StyledCheckboxSlider = styled(Switch)(({ theme }) => ({
   width: 46,
@@ -10,18 +11,19 @@ const StyledCheckboxSlider = styled(Switch)(({ theme }) => ({
   "& .MuiSwitch-switchBase": {
     padding: 0,
     margin: 2,
-    transition: "transform 300ms, color 300ms", // Use standard CSS strings for safety
+    transition: "transform 300ms, color 300ms",
     "&.Mui-checked": {
-      transform: "translateX(16px)",
+      transform: "translateX(20px)", // Slightly increased for the 46px width
       color: "#fff",
       "& + .MuiSwitch-track": {
-        backgroundColor: "#3A416FF2",
+        background: "linear-gradient(310deg, #3D9743 0%, #005607 100%)",
         opacity: 1,
         border: 0,
       },
     },
   },
   "& .MuiSwitch-thumb": {
+    boxShadow: "0 2px 4px 0 rgb(0 35 11 / 20%)",
     width: 22,
     height: 22,
   },
@@ -29,33 +31,47 @@ const StyledCheckboxSlider = styled(Switch)(({ theme }) => ({
     borderRadius: 26 / 2,
     backgroundColor: "#E9E9EA",
     opacity: 1,
-    // Safely access theme with a fallback to avoid '_names' null error
-    transition: theme?.transitions?.create
-      ? theme.transitions.create(["background-color"], { duration: 500 })
-      : "background-color 500ms ease-in-out",
+    transition: "background-color 500ms ease-in-out",
   },
 }));
 
-export const SliderSwitch = ({ status, label }) => {
+// Added onChange and isDisabled to props
+export const SliderSwitch = ({
+  status = false,
+  label,
+  onChange,
+  isDisabled = false,
+}) => {
+  // Sync internal state with prop if it changes externally
   const [checked, setChecked] = useState(status);
 
+  useEffect(() => {
+    setChecked(status);
+  }, [status]);
+
   const handleChange = (event) => {
-    setChecked(event.target.checked);
+    const val = event.target.checked;
+    setChecked(val);
+
+    // Send the status back to the parent component
+    if (onChange) {
+      onChange(val);
+    }
   };
 
   return (
-    <div className="grid grid-flow-col gap-2">
-      <StyledCheckboxSlider
-        checked={checked}
-        onChange={handleChange}
-        disabled={isDisabled}
-        inputProps={{ "aria-label": "controlled" }}
-      />
-      {label ? (
-        <p className="font-normal text-sm">
-          {checked ? "Toggle ON" : "Toggle OFF"}
-        </p>
-      ) : null}
+    <div className="grid grid-cols-3">
+      <TextLabel>{label?.title}</TextLabel>
+      <div className="flex items-center gap-2 col-span-2">
+        <p className="text-sm">{label?.off ?? "ON"}</p>
+        <StyledCheckboxSlider
+          checked={checked}
+          onChange={handleChange}
+          disabled={isDisabled}
+          inputProps={{ "aria-label": "controlled" }}
+        />
+        <p className="text-sm">{label?.on ?? "ON"}</p>
+      </div>
     </div>
   );
 };

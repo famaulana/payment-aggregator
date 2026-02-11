@@ -1,7 +1,7 @@
-export const ErrorIcon = () => (
+export const ErrorIcon = ({ size = "149" }) => (
   <svg
-    width="149"
-    height="149"
+    width={size}
+    height={size}
     viewBox="0 0 149 149"
     fill="none"
     xmlns="http://www.w3.org/2000/svg">

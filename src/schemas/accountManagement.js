@@ -2,7 +2,8 @@
 import * as yup from "yup";
 
 export const CreateUserSchema = yup.object().shape({
-  name: yup.string().required("Kolom tidak boleh kosong!"),
+  username: yup.string().required("Kolom tidak boleh kosong!"),
+  full_name: yup.string().required("Kolom tidak boleh kosong!"),
   email: yup
     .string()
     .required("Kolom tidak boleh kosong!")
@@ -15,6 +16,11 @@ export const CreateUserSchema = yup.object().shape({
     .string()
     .required("Kolom tidak boleh kosong!")
     .min(8, "Password must be at least 8 characters"),
-  role: yup.object().required("Pilih salah satu role!"),
+  password_confirmation: yup
+    .string()
+    .required("Kolom tidak boleh kosong!")
+    .min(8, "Password must be at least 8 characters")
+    .oneOf([yup.ref("password")], "Password not matches!"),
+  role: yup.string().required("Pilih salah satu role!"),
   status: yup.bool(),
 });

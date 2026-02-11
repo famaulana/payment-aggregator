@@ -3,7 +3,7 @@ import { UsersApi } from "../api/users.service";
 
 export const useGetUser = (payload) => {
   return useQuery({
-    queryKey: ["user", payload],
+    queryKey: ["userList", payload],
     queryFn: () => UsersApi.getUserList(payload),
     select: ({ response_code, data, ...response }) => {
       if (response_code == "0000") {

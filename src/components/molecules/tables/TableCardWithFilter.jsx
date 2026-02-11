@@ -36,6 +36,7 @@ export const TableCardWithFilter = ({ title, columns, data, renderFilter }) => {
                   key={col.id}
                   sx={{
                     fontWeight: 700,
+                    minWidth: col.minWidth ?? "auto",
                   }}
                   className="text-xxs font-extrabold uppercase border-b border-gray-100">
                   {col.label}
@@ -51,7 +52,10 @@ export const TableCardWithFilter = ({ title, columns, data, renderFilter }) => {
                 {columns.map((col) => (
                   <TableCell
                     key={col.id}
-                    className="py-4 border-b border-gray-100">
+                    className="py-4 border-b border-gray-100"
+                    sx={{
+                      minWidth: col.minWidth ?? "auto",
+                    }}>
                     {col.render ? (
                       col.render(row)
                     ) : (

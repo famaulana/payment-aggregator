@@ -16,6 +16,7 @@ export const config = {
 
 export default function middleware(req) {
   const token = req.cookies.get("access_token")?.value;
+  const user = req.cookies.get("user")?.value;
   const isLoginPage = req.nextUrl.pathname === "/login";
 
   // only redirect to dashboard if the token is actually valid.
@@ -24,9 +25,10 @@ export default function middleware(req) {
   }
 
   // If NO token and NOT on login page, go to login
-  if (!token && !isLoginPage) {
+  if ((!token || !user) && !isLoginPage) {
     const response = NextResponse.redirect(new URL("/login", req.url));
     // Force clear just in case
+    response.cookies.delete("user");
     response.cookies.delete("access_token");
     response.cookies.delete("refresh_token");
     response.cookies.delete("token_type");
@@ -40,7 +42,9 @@ export default function middleware(req) {
   /* === BELOW IS USER WHO NOT UNATHORIZED OR NOT HAVING ACCESS === */
 
   /* === PUBLIC ROUTE === */
-  if (["/login", "/setting-role"].includes(req.nextUrl.pathname)) {
+  if (
+    ["/login", "/account-management/activity"].includes(req.nextUrl.pathname)
+  ) {
     return NextResponse.next();
   }
 

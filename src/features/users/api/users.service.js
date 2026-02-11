@@ -11,4 +11,10 @@ export const UsersApi = {
     const { data } = await apiClient.post("/v1/dashboard/users", payload);
     return data;
   },
+  getUserDetails: async (payload) => {
+    if (!payload) return;
+
+    const { data } = await apiClient.get(`/v1/dashboard/users/${payload}`);
+    return data;
+  },
 };
