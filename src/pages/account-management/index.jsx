@@ -4,6 +4,7 @@ import { TableCardWithFilter } from "@/components/molecules/tables/TableCardWith
 import { useGetUser } from "@/features/users/hooks/useGetUsers";
 import { useModalStore } from "@/store/useModalStore";
 import { Box, Button, Typography } from "@mui/material";
+import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
@@ -13,7 +14,10 @@ const AccountManagement = () => {
 
   const [payload, setPayload] = useState({});
 
-  const { data: listUsers, refetch } = useGetUser(payload);
+  const params = useSearchParams();
+  const currentPage = Number(params.get("page")) || 1;
+
+  const { data: listUsers } = useGetUser({ page: currentPage, ...payload });
 
   const onDetail = (id) => {
     router.push(
@@ -30,6 +34,7 @@ const AccountManagement = () => {
     {
       id: "id",
       label: "User ID",
+      width: 90,
     },
     {
       id: "full_name",
@@ -42,6 +47,7 @@ const AccountManagement = () => {
     {
       id: "role",
       label: "Role",
+      width: 100,
       render: (row) => (
         <Typography className="capitalize">{row.role}</Typography>
       ),
@@ -49,6 +55,7 @@ const AccountManagement = () => {
     {
       id: "status",
       label: "Status",
+      width: 100,
       render: (row) =>
         row.status == "inactive" ? (
           <Typography className="font-bold capitalize text-transparent bg-clip-text bg-linear-to-tl from-[#973D3D] to-[#E42D5D]">
@@ -67,6 +74,7 @@ const AccountManagement = () => {
     {
       id: "action",
       label: "More Action",
+      width: 300,
       render: (row) => (
         <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <DefaultButton colorType="success" sx={{ marginTop: 0 }}>
@@ -154,6 +162,7 @@ const AccountManagement = () => {
         renderFilter={() => <FilterComponent />}
         columns={columns}
         data={listUsers?.data ?? data}
+        pagination={listUsers?.pagination ?? null}
       />
     </>
   );

@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { UsersApi } from "../api/users.service";
+import { LogsApi } from "../api/logs.service";
 
-export const useGetUser = (payload) => {
+export const useGetActivities = (payload) => {
   return useQuery({
     queryKey: ["userList", payload],
-    queryFn: () => UsersApi.getUserList(payload),
+    queryFn: () => LogsApi.getActivities(payload),
     select: ({ response_code, data, ...response }) => {
       if (response_code == "0000") {
         const modifiedData =
@@ -13,8 +13,8 @@ export const useGetUser = (payload) => {
                 const updatedDate = new Date(item.updated_at);
                 return {
                   ...item,
-                  role: item.role.replace("_", " "),
-                  updated_at: updatedDate
+                  role: item.user.role.replace("_", " "),
+                  created_at: updatedDate
                     .toLocaleString("en-GB", {
                       day: "numeric",
                       month: "long",

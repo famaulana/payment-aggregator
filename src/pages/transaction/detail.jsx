@@ -3,23 +3,15 @@ import { SuccessIcon } from "@/components/atoms/icons/SuccessIcon";
 import { ControlledSelect } from "@/components/molecules/form-inputs/SelectDefault";
 import { TableCardWithFilter } from "@/components/molecules/tables/TableCardWithFilter";
 import UserInfoCard from "@/components/organisms/cards/InfoCardWithSubHeader";
-import { useGetActivities } from "@/features/logs/hooks/getActivities";
 import { useGetUserDetail } from "@/features/users/hooks/useGetUserDetail";
 import { ArrowBackOutlined } from "@mui/icons-material";
 import { Box, Button, Typography } from "@mui/material";
 import { useRouter } from "next/router";
-import { useState } from "react";
 
-const UserDetail = () => {
+const TransactionDetail = () => {
   const router = useRouter();
   const { id } = router.query;
-  const [payload, setPayload] = useState({});
-
   const { data: detailData } = useGetUserDetail(id);
-  const { data: listActivity } = useGetActivities({
-    ...payload,
-    user_id: Number(id),
-  });
 
   const onDetail = (id) => {
     console.log(id);
@@ -40,11 +32,11 @@ const UserDetail = () => {
       ),
     },
     {
-      id: "action_type",
+      id: "activity_type",
       label: "Activity Type",
     },
     {
-      id: "notes",
+      id: "description",
       label: "Description",
     },
     {
@@ -104,11 +96,13 @@ const UserDetail = () => {
   ];
 
   const handleChangeRole = (e) => {
-    setPayload({ ...payload, role: e.target.value });
+    console.log(e);
+    // setPayload({ ...payload, role: e.target.value });
   };
 
   const handleChangeStatus = (e) => {
-    setPayload({ ...payload, status: e.target.value });
+    console.log(e);
+    // setPayload({ ...payload, status: e.target.value });
   };
 
   const InfoRow = ({ label, value, isStatus }) => (
@@ -119,7 +113,7 @@ const UserDetail = () => {
         {label}
       </Typography>
       <Typography
-        className={`text-sm font-medium ${label == "Email" ? "" : "capitalize"} ${
+        className={`text-sm font-medium capitalize ${
           isStatus == "active" ? "text-green-600 font-bold" : "text-slate-400"
         }`}>
         {value || "-"}
@@ -132,12 +126,12 @@ const UserDetail = () => {
       <ControlledSelect
         onChange={handleChangeRole}
         options={roleOptions}
-        value={payload?.role ?? ""}
+        value={""}
       />
       <ControlledSelect
         onChange={handleChangeStatus}
         options={statusOptions}
-        value={payload?.status ?? ""}
+        value={""}
       />
     </div>
   );
@@ -199,12 +193,10 @@ const UserDetail = () => {
           title="User Permission"
           subtitle="All Permission on this user"
           className="grid grid-cols-2 gap-6">
-          {detailData?.data.permissions.map((item, index) => {
+          {detailData?.data.permissions.map((item) => {
             const modifiedValue = item.replaceAll("_", " ");
             return (
-              <div
-                key={`permission${index}`}
-                className="flex item-center space-x-2">
+              <div className="flex item-center space-x-2">
                 <div className="flex items-center">
                   <SuccessIcon size="20" />
                 </div>
@@ -226,8 +218,7 @@ const UserDetail = () => {
             title="Activity List"
             renderFilter={() => <FilterComponent />}
             columns={columns}
-            data={listActivity?.data ?? []}
-            pagination={listActivity?.pagination ?? null}
+            data={data}
           />
         </div>
       </div>
@@ -235,4 +226,4 @@ const UserDetail = () => {
   );
 };
 
-export default UserDetail;
+export default TransactionDetail;

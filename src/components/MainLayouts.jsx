@@ -12,7 +12,6 @@ import {
   InputBase,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import SearchIcon from "@mui/icons-material/Search";
 import PersonIcon from "@mui/icons-material/Person";
 import SettingsIcon from "@mui/icons-material/Settings";
 import NotificationsIcon from "@mui/icons-material/Notifications";
@@ -30,6 +29,7 @@ import RoleProtector from "./RoleGuard";
 import { useAuthStore } from "@/store/useAuthStore";
 import { MASTER_MAIN_MENU, MASTER_SETTINGS } from "@/utils/constants";
 import { getCookie } from "cookies-next";
+import Head from "next/head";
 
 const DRAWER_WIDTH = 300;
 
@@ -40,10 +40,19 @@ export const MainLayout = ({ children }) => {
   const spacedPathName = pathName.replace("-", " ") || "Dashboard";
   const modifiedPathName = spacedPathName.replace("/", " > ");
 
+  /* For Head title  */
+  const pathNameHead = router.pathname.split("/").filter(Boolean);
+  const parentSegmentHead = pathNameHead[0] || "Dashboard";
+  const formattedTitle =
+    parentSegmentHead.charAt(0).toUpperCase() + parentSegmentHead.slice(1);
+
   const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
 
   return (
     <RoleProtector>
+      <Head>
+        <title>{formattedTitle} - PG LIT</title>
+      </Head>
       <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "#f8f9fa" }}>
         {/* 1. SIDEBAR (DRAWER) */}
         <Box

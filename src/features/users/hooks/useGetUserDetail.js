@@ -10,6 +10,7 @@ export const useGetUserDetail = (payload) => {
         const updatedDate = new Date(data.updated_at);
         const modifiedData = {
           ...data,
+          role: data.role.replace("_", " "),
           updated_at: updatedDate
             .toLocaleString("en-GB", {
               day: "numeric",
