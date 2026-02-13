@@ -169,8 +169,17 @@ const TransactionPage = () => {
       <div className="flex justify-end">
         <Button
           variant="contained"
-          className="bg-[#00941E] rounded-2xl text-white">
-          Export Excel
+          sx={{
+            borderRadius: "16px",
+            background: "#00941E",
+            color: "white",
+            mb: "16px",
+            fontSize: "14px",
+            lineHeight: "27.5px",
+            py: "6px",
+          }}
+          className="text-lg">
+          Export to Excel
         </Button>
       </div>
       <TableCardWithFilter
