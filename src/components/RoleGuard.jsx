@@ -2,7 +2,7 @@
 
 import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter, usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo } from "react";
 
 const ROLE_PERMISSIONS = {
   system_owner: ["/account-management", "/dashboard", "/settings"],
@@ -12,29 +12,36 @@ const ROLE_PERMISSIONS = {
 };
 
 export default function RoleProtector({ children }) {
-  const { user, isHydrated } = useAuthStore(); // Ensure store is loaded from localStorage
+  const { user } = useAuthStore();
   const router = useRouter();
   const pathname = usePathname();
-  const [authorized, setAuthorized] = useState(false);
 
-  useEffect(() => {
-    // Wait for Zustand to hydrate if you're using persist middleware
-    if (!isHydrated) return;
-
-    if (!user) {
-      router.push("/login");
-      return;
-    }
+  // 1. Compute authorization strictly during render (stable)
+  const isAllowed = useMemo(() => {
+    if (!user) return false;
 
     const allowedPaths = ROLE_PERMISSIONS[user.role] || [];
-    const isAllowed = allowedPaths.some((path) => pathname.startsWith(path));
+    // Always allow dashboard, otherwise check permissions
+    return (
+      pathname === "/dashboard" ||
+      allowedPaths.some((path) => pathname.startsWith(path))
+    );
+  }, [user, pathname]);
 
-    if (!isAllowed) {
+  // 2. Handle Redirects in useEffect (Side Effect)
+  useEffect(() => {
+    if (!user) {
+      router.push("/login");
+    } else if (!isAllowed) {
       router.replace("/dashboard");
-    } else {
-      setAuthorized(true);
     }
-  }, [user, pathname, isHydrated, router]);
+  }, [user, isAllowed, router]);
 
-  return children;
+  // 3. THE FIX: If not ready, return null.
+  // This prevents the "Children" from mounting and triggering their own effects
+  if (user && !isAllowed) {
+    return null;
+  }
+
+  return <>{children}</>;
 }
