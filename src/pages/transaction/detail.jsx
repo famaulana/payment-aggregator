@@ -8,6 +8,22 @@ import { ArrowBackOutlined } from "@mui/icons-material";
 import { Box, Button, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 
+const InfoRow = ({ label, value, isStatus }) => (
+  <Box className="flex justify-between items-center py-3">
+    <Typography
+      sx={{ fontWeight: 500 }}
+      className=" font-semibold text-sm capitalize tracking-tight">
+      {label}
+    </Typography>
+    <Typography
+      className={`text-sm font-medium capitalize ${
+        isStatus == "active" ? "text-green-600 font-bold" : "text-slate-400"
+      }`}>
+      {value || "-"}
+    </Typography>
+  </Box>
+);
+
 const TransactionDetail = () => {
   const router = useRouter();
   const { id } = router.query;
@@ -105,22 +121,6 @@ const TransactionDetail = () => {
     // setPayload({ ...payload, status: e.target.value });
   };
 
-  const InfoRow = ({ label, value, isStatus }) => (
-    <Box className="flex justify-between items-center py-3">
-      <Typography
-        sx={{ fontWeight: 500 }}
-        className=" font-semibold text-sm capitalize tracking-tight">
-        {label}
-      </Typography>
-      <Typography
-        className={`text-sm font-medium capitalize ${
-          isStatus == "active" ? "text-green-600 font-bold" : "text-slate-400"
-        }`}>
-        {value || "-"}
-      </Typography>
-    </Box>
-  );
-
   const FilterComponent = () => (
     <div className="flex space-x-4">
       <ControlledSelect
@@ -193,10 +193,10 @@ const TransactionDetail = () => {
           title="User Permission"
           subtitle="All Permission on this user"
           className="grid grid-cols-2 gap-6">
-          {detailData?.data.permissions.map((item) => {
+          {detailData?.data.permissions.map((item, index) => {
             const modifiedValue = item.replaceAll("_", " ");
             return (
-              <div className="flex item-center space-x-2">
+              <div key={index} className="flex item-center space-x-2">
                 <div className="flex items-center">
                   <SuccessIcon size="20" />
                 </div>
