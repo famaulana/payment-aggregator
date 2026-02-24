@@ -34,7 +34,7 @@ export const MainLayout = ({ children }) => {
   return (
     <RoleProtector>
       <Head>
-        <title>{formattedTitle} - PG LIT</title>
+        <title>{formattedTitle ?? "Dashboard"} - PG LIT</title>
       </Head>
       <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "#f8f9fa" }}>
         {/* 1. SIDEBAR (DRAWER) */}

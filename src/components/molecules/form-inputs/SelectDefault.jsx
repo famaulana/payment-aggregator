@@ -4,7 +4,6 @@ import {
   Select,
   MenuItem,
   Box,
-  Typography,
   FormHelperText,
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -36,14 +35,7 @@ const SelectBase = ({ variant, error, helperText, children, ...props }) => (
         ? `grid grid-cols-3 ${error ? "items-baseline" : "items-center"} gap-1`
         : "flex flex-col gap-1"
     }>
-    {props?.title && (
-      <TextLabel>{props?.title}</TextLabel>
-      // <Typography
-
-      //   className={`ml-1 text-xs font-bold ${error ? "text-red-500" : ""}`}>
-      //   {label}
-      // </Typography>
-    )}
+    {props?.title && <TextLabel>{props?.title}</TextLabel>}
     <FormControl
       fullWidth
       error={error}

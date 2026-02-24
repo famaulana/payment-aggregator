@@ -23,4 +23,89 @@ export const CreateUserSchema = yup.object().shape({
     .oneOf([yup.ref("password")], "Password not matches!"),
   role: yup.string().required("Pilih salah satu role!"),
   status: yup.bool(),
+  client_code: yup.string().when("role", {
+    is: (val) => val == "client",
+    then: (schema) => schema.required("Kolom tidak boleh kosong!"),
+    otherwise: (schema) => schema.nullable(),
+  }),
+  client_name: yup.string().when("role", {
+    is: (val) => val == "client",
+    then: (schema) => schema.required("Kolom tidak boleh kosong!"),
+    otherwise: (schema) => schema.nullable(),
+  }),
+  business_type: yup.string().when("role", {
+    is: (val) => val == "client",
+    then: (schema) => schema.required("Kolom tidak boleh kosong!"),
+    otherwise: (schema) => schema.nullable(),
+  }),
+  bank_name: yup.string().when("role", {
+    is: (val) => val == "client",
+    then: (schema) => schema.required("Kolom tidak boleh kosong!"),
+    otherwise: (schema) => schema.nullable(),
+  }),
+  bank_account_number: yup.string().when("role", {
+    is: (val) => val == "client",
+    then: (schema) => schema.required("Kolom tidak boleh kosong!"),
+    otherwise: (schema) => schema.nullable(),
+  }),
+  bank_account_holder_name: yup.string().when("role", {
+    is: (val) => val == "client",
+    then: (schema) => schema.required("Kolom tidak boleh kosong!"),
+    otherwise: (schema) => schema.nullable(),
+  }),
+  bank_branch: yup.string().when("role", {
+    is: (val) => val == "client",
+    then: (schema) => schema.required("Kolom tidak boleh kosong!"),
+    otherwise: (schema) => schema.nullable(),
+  }),
+  pic_name: yup.string().when("role", {
+    is: (val) => val == "client",
+    then: (schema) => schema.required("Kolom tidak boleh kosong!"),
+    otherwise: (schema) => schema.nullable(),
+  }),
+  pic_position: yup.string().when("role", {
+    is: (val) => val == "client",
+    then: (schema) => schema.required("Kolom tidak boleh kosong!"),
+    otherwise: (schema) => schema.nullable(),
+  }),
+  pic_phone: yup.string().when("role", {
+    is: (val) => val == "client",
+    then: (schema) => schema.required("Kolom tidak boleh kosong!"),
+    otherwise: (schema) => schema.nullable(),
+  }),
+  pic_email: yup.string().when("role", {
+    is: (val) => val == "client",
+    then: (schema) => schema.required("Kolom tidak boleh kosong!"),
+    otherwise: (schema) => schema.nullable(),
+  }),
+  company_phone: yup.string().when("role", {
+    is: (val) => val == "client",
+    then: (schema) => schema.required("Kolom tidak boleh kosong!"),
+    otherwise: (schema) => schema.nullable(),
+  }),
+  company_email: yup.string().when("role", {
+    is: (val) => val == "client",
+    then: (schema) => schema.required("Kolom tidak boleh kosong!"),
+    otherwise: (schema) => schema.nullable(),
+  }),
+  province_id: yup.string().when("role", {
+    is: (val) => val == "client",
+    then: (schema) => schema.required("Kolom tidak boleh kosong!"),
+    otherwise: (schema) => schema.nullable(),
+  }),
+  city_id: yup.string().when("role", {
+    is: (val) => val == "client",
+    then: (schema) => schema.required("Kolom tidak boleh kosong!"),
+    otherwise: (schema) => schema.nullable(),
+  }),
+  address: yup.string().when("role", {
+    is: (val) => val == "client",
+    then: (schema) => schema.required("Kolom tidak boleh kosong!"),
+    otherwise: (schema) => schema.nullable(),
+  }),
+  postal_code: yup.string().when("role", {
+    is: (val) => val == "client",
+    then: (schema) => schema.required("Kolom tidak boleh kosong!"),
+    otherwise: (schema) => schema.nullable(),
+  }),
 });

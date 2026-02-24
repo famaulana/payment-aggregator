@@ -122,8 +122,8 @@ const AccountManagement = () => {
     { label: "Inactive", value: "inactive" },
   ];
 
-  const handleCreateModal = () => {
-    openModal("CREATE_USER", { header: "Create Account" }, "sm");
+  const handleCreatePage = () => {
+    router.push("/account-management/create-edit");
   };
 
   const handleChangeRole = (e) => {
@@ -148,7 +148,7 @@ const AccountManagement = () => {
       />
       <Button
         variant="contained"
-        onClick={handleCreateModal}
+        onClick={handleCreatePage}
         sx={{ bgcolor: "#3A416F", borderRadius: "16px" }}>
         Create Account
       </Button>

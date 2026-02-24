@@ -1,12 +1,35 @@
 import apiClient from "@/api/axios-instance";
 
-export const AuthApi = {
-  login: async (credentials) => {
-    const { data } = await apiClient.post("/v1/dashboard/login", credentials);
-    return data; // Expecting { user: {...}, token: "..." }
+export const LocationApi = {
+  getProvinces: async (payload) => {
+    const { data } = await apiClient.get("/v1/dashboard/locations/provinces", {
+      params: payload,
+      _skipLoading: true,
+    });
+    return data.map((item) => ({ ...item, label: item.name, value: item.id }));
   },
-  logout: async () => {
-    const { data } = await apiClient.post("/v1/dashboard/logout");
-    return data;
+  getCities: async (payload) => {
+    const { data } = await apiClient.get("/v1/dashboard/locations/cities", {
+      params: payload,
+      _skipLoading: true,
+    });
+    return data.map((item) => ({ ...item, label: item.name, value: item.id }));
+  },
+  getDistricts: async (payload) => {
+    const { data } = await apiClient.get("/v1/dashboard/locations/districts", {
+      params: payload,
+      _skipLoading: true,
+    });
+    return data.map((item) => ({ ...item, label: item.name, value: item.id }));
+  },
+  getSubDistricts: async (payload) => {
+    const { data } = await apiClient.get(
+      "/v1/dashboard/locations/sub-districts",
+      {
+        params: payload,
+        _skipLoading: true,
+      },
+    );
+    return data.map((item) => ({ ...item, label: item.name, value: item.id }));
   },
 };

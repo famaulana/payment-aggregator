@@ -12,7 +12,6 @@ import { TextLabel } from "@/components/atoms/typography/TextLabel";
 export const PasswordTextField = ({
   name,
   control,
-  label,
   variant = "vertical",
   ...props
 }) => {
@@ -38,7 +37,6 @@ export const PasswordTextField = ({
             className="col-span-2"
             {...field}
             {...props}
-            label={label}
             type={showPassword ? "text" : "password"}
             fullWidth
             error={!!error}
@@ -82,7 +80,6 @@ export const PasswordTextField = ({
           <TextField
             {...field}
             {...props}
-            label={label}
             type={showPassword ? "text" : "password"}
             fullWidth
             error={!!error}

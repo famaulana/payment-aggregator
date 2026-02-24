@@ -71,25 +71,6 @@ const UserDetail = () => {
     },
   ];
 
-  const data = [
-    {
-      id: "User-001",
-      role: "Merchant",
-      activity_type: "Login",
-      description: "Ini description activity",
-      ip_address: "191.121.21.3",
-      created_at: "10 January 2029",
-    },
-    {
-      id: "User-001",
-      role: "Merchant",
-      activity_type: "Login",
-      description: "Ini description activity",
-      ip_address: "191.121.21.4",
-      created_at: "10 January 2029",
-    },
-  ];
-
   const roleOptions = [
     { label: "All Role", value: "" },
     { label: "Client", value: "client" },

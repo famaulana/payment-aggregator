@@ -1,7 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { LocationApi } from "../api/location.service";
 
-export const useCities = () => {
+export const useProvinces = () => {
   const queryClient = useQueryClient();
 
   const loadOptions = async (inputValue) => {
@@ -9,8 +9,8 @@ export const useCities = () => {
 
     return queryClient.fetchQuery({
       // The queryKey includes the inputValue so specific searches are cached
-      queryKey: ["get-cities", inputValue],
-      queryFn: LocationApi.getCities(inputValue),
+      queryKey: ["get-provinces", inputValue],
+      queryFn: LocationApi.getProvinces(inputValue),
       staleTime: 1000 * 60 * 5, // Keep results "fresh" for 5 minutes
     });
   };
