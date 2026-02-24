@@ -2,11 +2,21 @@ import apiClient from "@/api/axios-instance";
 
 export const LocationApi = {
   getProvinces: async (payload) => {
+    const queryParams =
+      typeof payload === "string" ? { search: payload } : payload;
+
     const { data } = await apiClient.get("/v1/dashboard/locations/provinces", {
-      params: payload,
+      params: queryParams,
       _skipLoading: true,
     });
-    return data.map((item) => ({ ...item, label: item.name, value: item.id }));
+
+    const { data: listProvince } = data;
+
+    return listProvince.map((item) => ({
+      ...item,
+      label: item.name,
+      value: item.id,
+    }));
   },
   getCities: async (payload) => {
     const { data } = await apiClient.get("/v1/dashboard/locations/cities", {

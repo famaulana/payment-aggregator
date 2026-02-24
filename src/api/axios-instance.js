@@ -15,7 +15,7 @@ apiClient.interceptors.request.use((config) => {
     config.headers.Authorization = `${tokenType} ${token}`;
   }
 
-  if (!config.url.includes("/dashboard/refresh") || !config._skipLoading) {
+  if (!config.url.includes("/dashboard/refresh") && !config._skipLoading) {
     useModalStore.getState().openModal("LOADING", null, "xs");
   }
 

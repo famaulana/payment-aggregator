@@ -1,23 +1,23 @@
 import { DefaultButton } from "@/components/atoms/button/DefaultButton";
-import { SuccessIcon } from "@/components/atoms/icons/SuccessIcon";
-import { ControlledSelect } from "@/components/molecules/form-inputs/SelectDefault";
-import { TableCardWithFilter } from "@/components/molecules/tables/TableCardWithFilter";
+import { PasswordTextField } from "@/components/molecules/form-inputs/PasswordTextField";
+import { RHFSelect } from "@/components/molecules/form-inputs/SelectDefault";
+import { SliderSwitch } from "@/components/molecules/form-inputs/Switch";
+import { TextFieldInput } from "@/components/molecules/form-inputs/TextField";
+import { FormBuilder } from "@/components/organisms/builder";
 import CardWithTitle from "@/components/organisms/cards/CardWithTitle";
-import UserInfoCard from "@/components/organisms/cards/InfoCardWithSubHeader";
 import { SubFormClient } from "@/components/organisms/section/account-management/forms/SubformClient";
-import { useGetActivities } from "@/features/logs/hooks/getActivities";
-import { useGetUserDetail } from "@/features/users/hooks/useGetUserDetail";
+import { CreateUserSchema } from "@/schemas/accountManagement";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { ArrowBackOutlined } from "@mui/icons-material";
-import { Box, Button, Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 
 const CreateEditUser = () => {
   const router = useRouter();
-  const { id } = router.query;
-  const [payload, setPayload] = useState({});
+  const [role, setRole] = useState("");
 
-  const { data: detailData } = useGetUserDetail(id);
   const [active, setActive] = useState(false);
 
   const label = {
@@ -29,13 +29,11 @@ const CreateEditUser = () => {
   const options = [
     { label: "Admin", value: "admin" },
     {
-      entity_type: "client",
-      entity_id: 1,
       label: "Client",
-      value: "client_admin",
+      value: "client",
     },
     { label: "Merchant", value: "merchant" },
-    { label: "Headquarter", value: "headquarter" },
+    { label: "Headquarter", value: "head_quarter" },
   ];
 
   const methods = useForm({
@@ -43,7 +41,7 @@ const CreateEditUser = () => {
     resolver: yupResolver(CreateUserSchema),
   });
 
-  const { control } = methods;
+  const { control, watch } = methods;
 
   const handleSubmit = (value) => {
     const selectedOption = options.find((item) => item.value == value.role);
@@ -57,119 +55,153 @@ const CreateEditUser = () => {
     createUser(payload);
   };
 
+  const handleBack = () => {
+    router.back();
+  };
+
   const handleActive = (val) => {
     setActive(val);
   };
 
+  const roleWatch = watch("role");
+
   return (
-    <div className="flex w-full">
-      <FormBuilder
-        methods={methods}
-        className="w-full flex flex-col space-y-4"
-        onSubmit={handleSubmit}
-        fields={[
-          {
-            component: (
-              <TextFieldInput
-                variant="horizontal"
-                name="username"
-                title="Username"
-                placeholder="john_doe"
-                control={control}
-              />
-            ),
-          },
-          {
-            component: (
-              <TextFieldInput
-                variant="horizontal"
-                name="full_name"
-                title="Full Name"
-                placeholder="John Doe"
-                control={control}
-              />
-            ),
-          },
-          {
-            component: (
-              <TextFieldInput
-                variant="horizontal"
-                name="email"
-                title="Email"
-                placeholder="Example@email.com"
-                control={control}
-              />
-            ),
-          },
-          {
-            component: (
-              <PasswordTextField
-                name="password"
-                variant="horizontal"
-                title="Password"
-                placeholder="At least 8 character"
-                control={control}
-              />
-            ),
-          },
-          {
-            component: (
-              <PasswordTextField
-                name="password_confirmation"
-                variant="horizontal"
-                title="Password Confirmation"
-                placeholder="At least 8 character"
-                control={control}
-              />
-            ),
-          },
-          {
-            component: (
-              <RHFSelect
-                options={options}
-                name="role"
-                control={control}
-                placeholder="Pilih salah satu role"
-                title="Role"
-                variant="horizontal"
-                sx={{
-                  "& .MuiSelect-select": { padding: "16.5px 16px" },
-                }}
-              />
-            ),
-          },
-          {
-            component: <SubFormClient control={control} />,
-          },
-          {
-            component: (
-              <SliderSwitch
-                status={active}
-                label={label}
-                onChange={handleActive}
-              />
-            ),
-          },
-          {
-            component: (
-              <div className="flex gap-4 space-x-4 w-full px-6 mt-2 items-center">
-                <DefaultButton
-                  colorType="danger"
-                  sx={{ marginTop: 0 }}
-                  onClick={closeModal}>
-                  Cancel
-                </DefaultButton>
-                <DefaultButton
-                  colorType="success"
-                  sx={{ marginTop: 0 }}
-                  type="submit">
-                  Save Changes
-                </DefaultButton>
-              </div>
-            ),
-          },
-        ]}
-      />
+    <div className="flex flex-col w-full">
+      <div className="mb-4">
+        <Button
+          variant="contained"
+          onClick={handleBack}
+          sx={{
+            background: "white",
+            color: "#E42D5D",
+          }}>
+          <ArrowBackOutlined
+            sx={{
+              fontSize: 20,
+              border: "2.25px solid transparent",
+            }}
+          />
+          <Typography
+            sx={{
+              fontWeight: 600,
+            }}
+            className="font-bold bg-inherit capitalize text-transparent bg-clip-text bg-linear-to-tl from-[#973D3D] to-[#E42D5D]">
+            Back{" "}
+          </Typography>
+        </Button>
+      </div>
+      <CardWithTitle title="Create Data">
+        <FormBuilder
+          methods={methods}
+          className="w-full flex flex-col space-y-4"
+          onSubmit={handleSubmit}
+          fields={[
+            {
+              component: (
+                <TextFieldInput
+                  variant="horizontal"
+                  name="username"
+                  title="Username"
+                  placeholder="john_doe"
+                  control={control}
+                />
+              ),
+            },
+            {
+              component: (
+                <TextFieldInput
+                  variant="horizontal"
+                  name="full_name"
+                  title="Full Name"
+                  placeholder="John Doe"
+                  control={control}
+                />
+              ),
+            },
+            {
+              component: (
+                <TextFieldInput
+                  variant="horizontal"
+                  name="email"
+                  title="Email"
+                  placeholder="Example@email.com"
+                  control={control}
+                />
+              ),
+            },
+            {
+              component: (
+                <PasswordTextField
+                  name="password"
+                  variant="horizontal"
+                  title="Password"
+                  placeholder="At least 8 character"
+                  control={control}
+                />
+              ),
+            },
+            {
+              component: (
+                <PasswordTextField
+                  name="password_confirmation"
+                  variant="horizontal"
+                  title="Password Confirmation"
+                  placeholder="At least 8 character"
+                  control={control}
+                />
+              ),
+            },
+            {
+              component: (
+                <RHFSelect
+                  options={options}
+                  name="role"
+                  control={control}
+                  value={role ?? ""}
+                  onChange={(e) => {
+                    e.preventDefault();
+                    setRole(e.target.value);
+                  }}
+                  placeholder="Pilih salah satu role"
+                  title="Role"
+                  variant="horizontal"
+                  sx={{
+                    "& .MuiSelect-select": { padding: "16.5px 16px" },
+                  }}
+                />
+              ),
+            },
+            ...(roleWatch == "client"
+              ? [
+                  {
+                    component: <SubFormClient methods={methods} />,
+                  },
+                ]
+              : []),
+            {
+              component: (
+                <SliderSwitch
+                  status={active}
+                  label={label}
+                  onChange={handleActive}
+                />
+              ),
+            },
+            {
+              component: (
+                <div className="flex gap-4 space-x-4 w-full px-6 mt-2 items-center">
+                  <DefaultButton
+                    colorType="success"
+                    sx={{ marginTop: 0 }}
+                    type="submit">
+                    Save Changes
+                  </DefaultButton>
+                </div>
+              ),
+            },
+          ]}
+        />
+      </CardWithTitle>
     </div>
   );
 };

@@ -6,10 +6,10 @@ import {
   TextField,
   CircularProgress,
   Box,
-  Typography,
+  debounce,
 } from "@mui/material";
 import { Controller } from "react-hook-form";
-import debounce from "lodash/debounce";
+// import debounce from "lodash/debounce";
 import { TextLabel } from "@/components/atoms/typography/TextLabel";
 
 /**
@@ -17,7 +17,6 @@ import { TextLabel } from "@/components/atoms/typography/TextLabel";
  * Use this for Non-RHF / No-Label scenarios
  */
 export const AsyncSelectBase = ({
-  label,
   value,
   onChange,
   fetchFn,
@@ -37,7 +36,9 @@ export const AsyncSelectBase = ({
         if (!inputValue) return;
         setLoading(true);
         try {
+          console.log(inputValue);
           const data = await fetchFn(inputValue);
+          console.log(data);
           setOptions(data || []);
         } catch (err) {
           setOptions([]);
@@ -51,6 +52,7 @@ export const AsyncSelectBase = ({
   const autocompleteContent = (
     <Autocomplete
       {...props}
+      filterOptions={(x) => x}
       value={value || null}
       onChange={(event, newValue) => onChange(newValue)}
       onInputChange={(event, newInputValue) => fetchOptions(newInputValue)}
@@ -90,16 +92,10 @@ export const AsyncSelectBase = ({
   if (variant === "horizontal") {
     return (
       <Box
-        sx={{
-          display: "flex",
-          flexDirection: { xs: "column", sm: "row" },
-          alignItems: { sm: "center" },
-          width: "100%",
-          gap: { xs: 1, sm: 2 },
-          mb: 2,
-        }}>
-        {label && <TextLabel>{label}</TextLabel>}
-        <Box sx={{ flexGrow: 1 }}>{autocompleteContent}</Box>
+        className="flex flex-col md:grid md:grid-cols-3"
+        sx={{ width: "100%" }}>
+        {props?.title && <TextLabel>{props?.title}</TextLabel>}
+        <Box className="md:col-span-2">{autocompleteContent}</Box>
       </Box>
     );
   }
@@ -107,7 +103,7 @@ export const AsyncSelectBase = ({
   // Vertical Variant (Standard or No-Label)
   return (
     <Box sx={{ width: "100%", mb: 2 }}>
-      {label && <TextLabel>{label}</TextLabel>}
+      {props?.title && <TextLabel>{props?.title}</TextLabel>}
       {autocompleteContent}
     </Box>
   );

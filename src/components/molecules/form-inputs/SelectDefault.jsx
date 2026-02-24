@@ -81,10 +81,18 @@ export const RHFSelect = ({
   <Controller
     name={name}
     control={control}
-    render={({ field, fieldState: { error } }) => (
+    render={({
+      field: { onChange, value, ...field },
+      fieldState: { error },
+    }) => (
       <SelectBase
         {...field}
         {...props}
+        value={value || ""} // Ensure it fallbacks to empty string, not undefined
+        onChange={(event) => {
+          // Explicitly pass the value to RHF
+          onChange(event.target.value);
+        }}
         error={!!error}
         helperText={error?.message}>
         {placeholder && (
