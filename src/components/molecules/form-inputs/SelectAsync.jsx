@@ -25,6 +25,7 @@ export const AsyncSelectBase = ({
   helperText,
   variant = "vertical", // "vertical" | "horizontal"
   inputRef,
+  disabled,
   ...props
 }) => {
   const [options, setOptions] = useState([]);
@@ -36,9 +37,7 @@ export const AsyncSelectBase = ({
         if (!inputValue) return;
         setLoading(true);
         try {
-          console.log(inputValue);
           const data = await fetchFn(inputValue);
-          console.log(data);
           setOptions(data || []);
         } catch (err) {
           setOptions([]);
@@ -58,6 +57,7 @@ export const AsyncSelectBase = ({
       onInputChange={(event, newInputValue) => fetchOptions(newInputValue)}
       options={options}
       loading={loading}
+      disabled={disabled}
       isOptionEqualToValue={(option, val) => option.value === val?.value}
       getOptionLabel={(option) => option.label || ""}
       fullWidth

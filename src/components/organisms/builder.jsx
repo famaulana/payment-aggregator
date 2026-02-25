@@ -3,7 +3,8 @@ import React from "react";
 const Form = ({ children, className, methods, onSubmit }) => {
   return (
     <form className={className} onSubmit={methods?.handleSubmit(onSubmit)}>
-      {React.Children.map(children, (child) => {
+      {children}
+      {/* {React.Children.map(children, (child) => {
         return child.props.name
           ? React.createElement(child.type, {
               ...{
@@ -13,7 +14,7 @@ const Form = ({ children, className, methods, onSubmit }) => {
               },
             })
           : child;
-      })}
+      })} */}
     </form>
   );
 };

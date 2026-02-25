@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuthStore } from "@/store/useAuthStore";
+import { getCookie } from "cookies-next";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useMemo } from "react";
 
@@ -12,7 +12,9 @@ const ROLE_PERMISSIONS = {
 };
 
 export default function RoleProtector({ children }) {
-  const { user } = useAuthStore();
+  const userRaw = getCookie("user");
+  const user = userRaw ? JSON.parse(userRaw) : null;
+
   const router = useRouter();
   const pathname = usePathname();
 

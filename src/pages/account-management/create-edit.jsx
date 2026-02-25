@@ -7,11 +7,12 @@ import { FormBuilder } from "@/components/organisms/builder";
 import CardWithTitle from "@/components/organisms/cards/CardWithTitle";
 import { SubFormClient } from "@/components/organisms/section/account-management/forms/SubformClient";
 import { CreateUserSchema } from "@/schemas/accountManagement";
+import { USER_FORM_DEFAULT } from "@/utils/constants";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ArrowBackOutlined } from "@mui/icons-material";
 import { Button, Typography } from "@mui/material";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 
 const CreateEditUser = () => {
@@ -37,8 +38,9 @@ const CreateEditUser = () => {
   ];
 
   const methods = useForm({
-    mode: "all",
+    mode: "onChange",
     resolver: yupResolver(CreateUserSchema),
+    defaultValues: USER_FORM_DEFAULT,
   });
 
   const { control, watch } = methods;
@@ -51,8 +53,9 @@ const CreateEditUser = () => {
       entity_id: selectedOption.entity_id,
       status: active ? "active" : "inactive",
     };
+    console.log(payload);
 
-    createUser(payload);
+    // createUser(payload);
   };
 
   const handleBack = () => {
@@ -64,6 +67,118 @@ const CreateEditUser = () => {
   };
 
   const roleWatch = watch("role");
+  const province = watch("role_data.province_id");
+
+  const fields = useMemo(
+    () => [
+      {
+        component: (
+          <TextFieldInput
+            variant="horizontal"
+            name="username"
+            title="Username"
+            placeholder="john_doe"
+            control={control}
+          />
+        ),
+      },
+      {
+        component: (
+          <TextFieldInput
+            variant="horizontal"
+            name="full_name"
+            title="Full Name"
+            placeholder="John Doe"
+            control={control}
+          />
+        ),
+      },
+      {
+        component: (
+          <TextFieldInput
+            variant="horizontal"
+            name="email"
+            title="Email"
+            placeholder="Example@email.com"
+            control={control}
+          />
+        ),
+      },
+      {
+        component: (
+          <PasswordTextField
+            name="password"
+            variant="horizontal"
+            title="Password"
+            placeholder="At least 8 character"
+            control={control}
+          />
+        ),
+      },
+      {
+        component: (
+          <PasswordTextField
+            name="password_confirmation"
+            variant="horizontal"
+            title="Password Confirmation"
+            placeholder="At least 8 character"
+            control={control}
+          />
+        ),
+      },
+      {
+        component: (
+          <RHFSelect
+            options={options}
+            name="role"
+            control={control}
+            value={role ?? ""}
+            onChange={(e) => {
+              e.preventDefault();
+              setRole(e.target.value);
+            }}
+            placeholder="Pilih salah satu role"
+            title="Role"
+            variant="horizontal"
+            sx={{
+              "& .MuiSelect-select": { padding: "16.5px 16px" },
+            }}
+          />
+        ),
+      },
+      ...(roleWatch == "client"
+        ? [
+            {
+              component: (
+                <SubFormClient
+                  key="client-subform"
+                  methods={methods}
+                  province={province}
+                />
+              ),
+            },
+          ]
+        : []),
+      {
+        component: (
+          <SliderSwitch status={active} label={label} onChange={handleActive} />
+        ),
+      },
+      {
+        component: (
+          <div className="flex gap-4 space-x-4 w-full px-6 mt-2 items-center">
+            <DefaultButton
+              colorType="success"
+              sx={{ marginTop: 0 }}
+              type="submit">
+              Save Changes
+            </DefaultButton>
+          </div>
+        ),
+      },
+    ],
+    [roleWatch, province],
+  );
 
   return (
     <div className="flex flex-col w-full">
@@ -95,111 +210,7 @@ const CreateEditUser = () => {
           methods={methods}
           className="w-full flex flex-col space-y-4"
           onSubmit={handleSubmit}
-          fields={[
-            {
-              component: (
-                <TextFieldInput
-                  variant="horizontal"
-                  name="username"
-                  title="Username"
-                  placeholder="john_doe"
-                  control={control}
-                />
-              ),
-            },
-            {
-              component: (
-                <TextFieldInput
-                  variant="horizontal"
-                  name="full_name"
-                  title="Full Name"
-                  placeholder="John Doe"
-                  control={control}
-                />
-              ),
-            },
-            {
-              component: (
-                <TextFieldInput
-                  variant="horizontal"
-                  name="email"
-                  title="Email"
-                  placeholder="Example@email.com"
-                  control={control}
-                />
-              ),
-            },
-            {
-              component: (
-                <PasswordTextField
-                  name="password"
-                  variant="horizontal"
-                  title="Password"
-                  placeholder="At least 8 character"
-                  control={control}
-                />
-              ),
-            },
-            {
-              component: (
-                <PasswordTextField
-                  name="password_confirmation"
-                  variant="horizontal"
-                  title="Password Confirmation"
-                  placeholder="At least 8 character"
-                  control={control}
-                />
-              ),
-            },
-            {
-              component: (
-                <RHFSelect
-                  options={options}
-                  name="role"
-                  control={control}
-                  value={role ?? ""}
-                  onChange={(e) => {
-                    e.preventDefault();
-                    setRole(e.target.value);
-                  }}
-                  placeholder="Pilih salah satu role"
-                  title="Role"
-                  variant="horizontal"
-                  sx={{
-                    "& .MuiSelect-select": { padding: "16.5px 16px" },
-                  }}
-                />
-              ),
-            },
-            ...(roleWatch == "client"
-              ? [
-                  {
-                    component: <SubFormClient methods={methods} />,
-                  },
-                ]
-              : []),
-            {
-              component: (
-                <SliderSwitch
-                  status={active}
-                  label={label}
-                  onChange={handleActive}
-                />
-              ),
-            },
-            {
-              component: (
-                <div className="flex gap-4 space-x-4 w-full px-6 mt-2 items-center">
-                  <DefaultButton
-                    colorType="success"
-                    sx={{ marginTop: 0 }}
-                    type="submit">
-                    Save Changes
-                  </DefaultButton>
-                </div>
-              ),
-            },
-          ]}
+          fields={fields}
         />
       </CardWithTitle>
     </div>

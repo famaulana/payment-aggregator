@@ -19,27 +19,57 @@ export const LocationApi = {
     }));
   },
   getCities: async (payload) => {
+    const queryParams =
+      typeof payload === "string" ? { search: payload } : payload;
+
     const { data } = await apiClient.get("/v1/dashboard/locations/cities", {
-      params: payload,
+      params: queryParams,
       _skipLoading: true,
     });
-    return data.map((item) => ({ ...item, label: item.name, value: item.id }));
+
+    const { data: listCity } = data;
+
+    return listCity.map((item) => ({
+      ...item,
+      label: item.name,
+      value: item.id,
+    }));
   },
   getDistricts: async (payload) => {
+    const queryParams =
+      typeof payload === "string" ? { search: payload } : payload;
+
     const { data } = await apiClient.get("/v1/dashboard/locations/districts", {
-      params: payload,
+      params: queryParams,
       _skipLoading: true,
     });
-    return data.map((item) => ({ ...item, label: item.name, value: item.id }));
+
+    const { data: listDistrict } = data;
+
+    return listDistrict.map((item) => ({
+      ...item,
+      label: item.name,
+      value: item.id,
+    }));
   },
   getSubDistricts: async (payload) => {
+    const queryParams =
+      typeof payload === "string" ? { search: payload } : payload;
+
     const { data } = await apiClient.get(
       "/v1/dashboard/locations/sub-districts",
       {
-        params: payload,
+        params: queryParams,
         _skipLoading: true,
       },
     );
-    return data.map((item) => ({ ...item, label: item.name, value: item.id }));
+
+    const { data: listSubDistrict } = data;
+
+    return listSubDistrict.map((item) => ({
+      ...item,
+      label: item.name,
+      value: item.id,
+    }));
   },
 };

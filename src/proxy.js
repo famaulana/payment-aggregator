@@ -24,6 +24,11 @@ export default function middleware(req) {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
+  if (token && req.nextUrl.pathname !== "/403") {
+    return NextResponse.next();
+  }
+
+  /* === BELOW IS USER WHO NOT UNATHORIZED OR NOT HAVING ACCESS === */
   // If NO token and NOT on login page, go to login
   if ((!token || !user) && !isLoginPage) {
     const response = NextResponse.redirect(new URL("/login", req.url));
@@ -34,12 +39,6 @@ export default function middleware(req) {
     response.cookies.delete("token_type");
     return response;
   }
-
-  if (token && req.nextUrl.pathname !== "/403") {
-    return NextResponse.next();
-  }
-
-  /* === BELOW IS USER WHO NOT UNATHORIZED OR NOT HAVING ACCESS === */
 
   /* === PUBLIC ROUTE === */
   if (
