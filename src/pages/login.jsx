@@ -12,8 +12,6 @@ import { useModalStore } from "@/store/useModalStore";
 const Login = () => {
   const { mutate: login } = useLogin();
 
-  const { openModal, closeModal } = useModalStore();
-
   const methods = useForm({
     mode: "all",
     resolver: yupResolver(LoginSchema),

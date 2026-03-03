@@ -31,6 +31,8 @@ export const USER_FORM_DEFAULT = {
   password_confirmation: "",
   role: "", // or "" if the user chooses it first
   role_data: {
+    code: "",
+    name: "",
     client_code: "",
     client_name: "",
     headquarter_code: "",

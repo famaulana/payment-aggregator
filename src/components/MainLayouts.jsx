@@ -20,7 +20,7 @@ export const MainLayout = ({ children }) => {
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathName = router.pathname.replace("/", "") || "Dashboard";
-  const spacedPathName = pathName.replace("-", " ") || "Dashboard";
+  const spacedPathName = pathName.replaceAll("-", " ") || "Dashboard";
   const modifiedPathName = spacedPathName.replace("/", " > ");
 
   /* For Head title  */

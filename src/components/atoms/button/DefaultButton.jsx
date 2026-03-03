@@ -83,7 +83,7 @@ const CustomizedDangerButton = styled(Button)(({ theme }) => ({
     boxShadow:
       "0 3px 5px -1px rgba(0,0,0,0.09), 0 2px 3px -1px rgba(0,0,0,0.07)",
     // Maintain gradient on hover
-    background: "linear-gradient(310deg, #473D97 0%, #E42D5D 100%)",
+    background: "linear-gradient(310deg, #973D3D 0%, #E42D5D 100%)",
     opacity: 0.9,
   },
 

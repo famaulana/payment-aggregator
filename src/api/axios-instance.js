@@ -53,6 +53,7 @@ apiClient.interceptors.response.use(
       originalRequest.url.includes("/login") || // Adjust path to match your API
       originalRequest.url.includes("/dashboard/refresh")
     ) {
+      useModalStore.getState().closeModal();
       return Promise.reject(error);
     }
     // --- EXCLUSION LOGIC END ---

@@ -5,21 +5,35 @@ import { SliderSwitch } from "@/components/molecules/form-inputs/Switch";
 import { TextFieldInput } from "@/components/molecules/form-inputs/TextField";
 import { FormBuilder } from "@/components/organisms/builder";
 import CardWithTitle from "@/components/organisms/cards/CardWithTitle";
+import { SubFormAdmin } from "@/components/organisms/section/account-management/forms/SubformAdmin";
 import { SubFormClient } from "@/components/organisms/section/account-management/forms/SubformClient";
-import { CreateUserSchema } from "@/schemas/accountManagement";
+import { SubFormHeadQuarter } from "@/components/organisms/section/account-management/forms/SubformHeadQuarter";
+import { SubFormMerchant } from "@/components/organisms/section/account-management/forms/SubformMerchant";
+import { useCreateUser } from "@/features/users/hooks/useCreateUser";
+import { useGetUserDetail } from "@/features/users/hooks/useGetUserDetail";
+import { useUpdateUser } from "@/features/users/hooks/useUpdateUser";
+import { getUserSchema } from "@/schemas/accountManagement";
 import { USER_FORM_DEFAULT } from "@/utils/constants";
+import { cleanObject } from "@/utils/formatData";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ArrowBackOutlined } from "@mui/icons-material";
 import { Button, Typography } from "@mui/material";
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 
 const CreateEditUser = () => {
   const router = useRouter();
-  const [role, setRole] = useState("");
+  const { id } = router.query;
 
+  const { data: detailData } = useGetUserDetail(id);
+  const { mutate: createUser } = useCreateUser();
+  const { mutate: updateUser } = useUpdateUser();
+
+  const [role, setRole] = useState("");
   const [active, setActive] = useState(false);
+
+  const isEdit = !!id;
 
   const label = {
     title: "isActive?",
@@ -28,7 +42,7 @@ const CreateEditUser = () => {
   };
 
   const options = [
-    { label: "Admin", value: "admin" },
+    { label: "Admin", value: "system_owner_admin" },
     {
       label: "Client",
       value: "client",
@@ -39,23 +53,37 @@ const CreateEditUser = () => {
 
   const methods = useForm({
     mode: "onChange",
-    resolver: yupResolver(CreateUserSchema),
+    resolver: yupResolver(getUserSchema(isEdit)),
     defaultValues: USER_FORM_DEFAULT,
   });
 
   const { control, watch } = methods;
 
   const handleSubmit = (value) => {
-    const selectedOption = options.find((item) => item.value == value.role);
     const payload = {
       ...value,
-      entity_type: selectedOption.entity_type,
-      entity_id: selectedOption.entity_id,
+      ...value.role_data,
+      province_id: value.role_data?.province_id?.value,
+      city_id: value.role_data?.city_id?.value,
+      district_id: value.role_data?.district_id?.value,
+      sub_district_id: value.role_data?.sub_district_id?.value,
+      role_data: null,
+      entity_type:
+        value?.role == "system_owner_admin" ? "system_owner" : value?.role,
       status: active ? "active" : "inactive",
     };
-    console.log(payload);
 
-    // createUser(payload);
+    const cleanPayload = cleanObject({
+      ...payload,
+      role: value.role ?? detailData?.role,
+    });
+
+    if (isEdit) {
+      // console.log(cleanPayload);
+      updateUser(id, cleanPayload);
+    } else {
+      createUser(payload);
+    }
   };
 
   const handleBack = () => {
@@ -68,6 +96,8 @@ const CreateEditUser = () => {
 
   const roleWatch = watch("role");
   const province = watch("role_data.province_id");
+  const city = watch("role_data.city_id");
+  const district = watch("role_data.district_id");
 
   const fields = useMemo(
     () => [
@@ -146,6 +176,19 @@ const CreateEditUser = () => {
           />
         ),
       },
+      ...(roleWatch == "system_owner_admin"
+        ? [
+            {
+              component: (
+                <SubFormAdmin
+                  key="client-subform"
+                  methods={methods}
+                  province={province}
+                />
+              ),
+            },
+          ]
+        : []),
       ...(roleWatch == "client"
         ? [
             {
@@ -154,6 +197,36 @@ const CreateEditUser = () => {
                   key="client-subform"
                   methods={methods}
                   province={province}
+                />
+              ),
+            },
+          ]
+        : []),
+      ...(roleWatch == "head_quarter"
+        ? [
+            {
+              component: (
+                <SubFormHeadQuarter
+                  key="headquarter-subform"
+                  methods={methods}
+                  province={province}
+                  city={city}
+                  district={district}
+                />
+              ),
+            },
+          ]
+        : []),
+      ...(roleWatch == "merchant"
+        ? [
+            {
+              component: (
+                <SubFormMerchant
+                  key="merchant-subform"
+                  methods={methods}
+                  province={province}
+                  city={city}
+                  district={district}
                 />
               ),
             },
@@ -177,7 +250,7 @@ const CreateEditUser = () => {
         ),
       },
     ],
-    [roleWatch, province],
+    [roleWatch, province, city, district],
   );
 
   return (
@@ -205,7 +278,7 @@ const CreateEditUser = () => {
           </Typography>
         </Button>
       </div>
-      <CardWithTitle title="Create Data">
+      <CardWithTitle title={isEdit ? "Edit Data" : "Create Data"}>
         <FormBuilder
           methods={methods}
           className="w-full flex flex-col space-y-4"

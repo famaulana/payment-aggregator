@@ -12,12 +12,12 @@ import { useModalStore } from "@/store/useModalStore";
 
 // Import your specific modal views
 import SuccessModal from "./modal/Success";
-import CreateUserModal from "./modal/CreateUser";
 import LoadingModal from "./modal/Loading";
+import ErrorModal from "./modal/Error";
 
 const MODAL_COMPONENTS = {
   SUCCESS: SuccessModal,
-  CREATE_USER: CreateUserModal,
+  ERROR: ErrorModal,
   LOADING: LoadingModal,
 };
 
