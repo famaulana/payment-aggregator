@@ -30,6 +30,17 @@ const AccountManagement = () => {
     );
   };
 
+  const onEdit = (id) => {
+    router.push(
+      {
+        pathname: `${router.pathname}/create-edit`,
+        query: { id: id },
+      },
+      undefined,
+      { shallow: true },
+    );
+  };
+
   const columns = [
     {
       id: "id",
@@ -77,7 +88,10 @@ const AccountManagement = () => {
       width: 300,
       render: (row) => (
         <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <DefaultButton colorType="success" sx={{ marginTop: 0 }}>
+          <DefaultButton
+            onClick={onEdit.bind(this, row.id)}
+            colorType="success"
+            sx={{ marginTop: 0 }}>
             Edit
           </DefaultButton>
           <DefaultButton
@@ -122,8 +136,8 @@ const AccountManagement = () => {
     { label: "Inactive", value: "inactive" },
   ];
 
-  const handleCreateModal = () => {
-    openModal("CREATE_USER", { header: "Create Account" }, "sm");
+  const handleCreatePage = () => {
+    router.push("/account-management/create-edit");
   };
 
   const handleChangeRole = (e) => {
@@ -148,7 +162,7 @@ const AccountManagement = () => {
       />
       <Button
         variant="contained"
-        onClick={handleCreateModal}
+        onClick={handleCreatePage}
         sx={{ bgcolor: "#3A416F", borderRadius: "16px" }}>
         Create Account
       </Button>

@@ -15,7 +15,7 @@ apiClient.interceptors.request.use((config) => {
     config.headers.Authorization = `${tokenType} ${token}`;
   }
 
-  if (!config.url.includes("/dashboard/refresh")) {
+  if (!config.url.includes("/dashboard/refresh") && !config._skipLoading) {
     useModalStore.getState().openModal("LOADING", null, "xs");
   }
 
@@ -53,6 +53,7 @@ apiClient.interceptors.response.use(
       originalRequest.url.includes("/login") || // Adjust path to match your API
       originalRequest.url.includes("/dashboard/refresh")
     ) {
+      useModalStore.getState().closeModal();
       return Promise.reject(error);
     }
     // --- EXCLUSION LOGIC END ---

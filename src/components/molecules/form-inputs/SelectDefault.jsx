@@ -4,7 +4,6 @@ import {
   Select,
   MenuItem,
   Box,
-  Typography,
   FormHelperText,
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -36,14 +35,7 @@ const SelectBase = ({ variant, error, helperText, children, ...props }) => (
         ? `grid grid-cols-3 ${error ? "items-baseline" : "items-center"} gap-1`
         : "flex flex-col gap-1"
     }>
-    {props?.title && (
-      <TextLabel>{props?.title}</TextLabel>
-      // <Typography
-
-      //   className={`ml-1 text-xs font-bold ${error ? "text-red-500" : ""}`}>
-      //   {label}
-      // </Typography>
-    )}
+    {props?.title && <TextLabel>{props?.title}</TextLabel>}
     <FormControl
       fullWidth
       error={error}
@@ -89,10 +81,18 @@ export const RHFSelect = ({
   <Controller
     name={name}
     control={control}
-    render={({ field, fieldState: { error } }) => (
+    render={({
+      field: { onChange, value, ...field },
+      fieldState: { error },
+    }) => (
       <SelectBase
         {...field}
         {...props}
+        value={value || ""} // Ensure it fallbacks to empty string, not undefined
+        onChange={(event) => {
+          // Explicitly pass the value to RHF
+          onChange(event.target.value);
+        }}
         error={!!error}
         helperText={error?.message}>
         {placeholder && (

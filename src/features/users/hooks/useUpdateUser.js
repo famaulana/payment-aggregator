@@ -3,15 +3,15 @@ import { UsersApi } from "../api/users.service";
 import { useModalStore } from "@/store/useModalStore";
 import { useRouter } from "next/router";
 
-export const useCreateUser = () => {
+export const useUpdateUser = () => {
   const router = useRouter();
   const { openModal } = useModalStore();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: UsersApi.createUser,
+    mutationFn: UsersApi.updateUser,
     onSuccess: ({ response_code, data, response_message }) => {
-      if (response_code == "0001") {
+      if (response_code == "0004") {
         queryClient.invalidateQueries({ queryKey: ["userList"] });
         openModal("SUCCESS", { messages: response_message });
         router.push(

@@ -25,6 +25,10 @@ const UserDetail = () => {
     console.log(id);
   };
 
+  const onBack = () => {
+    router.back()
+  };
+
   const columns = [
     {
       id: "id",
@@ -68,25 +72,6 @@ const UserDetail = () => {
           </DefaultButton>
         </Box>
       ),
-    },
-  ];
-
-  const data = [
-    {
-      id: "User-001",
-      role: "Merchant",
-      activity_type: "Login",
-      description: "Ini description activity",
-      ip_address: "191.121.21.3",
-      created_at: "10 January 2029",
-    },
-    {
-      id: "User-001",
-      role: "Merchant",
-      activity_type: "Login",
-      description: "Ini description activity",
-      ip_address: "191.121.21.4",
-      created_at: "10 January 2029",
     },
   ];
 
@@ -147,6 +132,7 @@ const UserDetail = () => {
       <div className="flex justify-between items-center mb-6">
         <Button
           variant="contained"
+          onClick={onBack}
           sx={{
             background: "white",
             color: "#E42D5D",

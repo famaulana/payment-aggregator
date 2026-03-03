@@ -2,7 +2,7 @@ import { Typography, Box } from "@mui/material";
 import { useModalStore } from "@/store/useModalStore";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { DefaultButton } from "@/components/atoms/button/DefaultButton";
-import { ErrorIcon } from "@/components/atoms/icons/ErrorIcon";
+import ErrorCloseIcon, { ErrorIcon } from "@/components/atoms/icons/ErrorIcon";
 
 const ErrorModal = ({ data }) => {
   const closeModal = useModalStore((s) => s.closeModal);
@@ -10,7 +10,7 @@ const ErrorModal = ({ data }) => {
   return (
     <Box className="text-center  flex flex-col space-y-2">
       <div className="flex justify-center">
-        <ErrorIcon />
+        <ErrorCloseIcon size={150} />
       </div>
 
       <Typography variant="h6" className="font-bold text-slate-700 mb-4">
@@ -21,10 +21,12 @@ const ErrorModal = ({ data }) => {
         {data.messages ?? "Error Modal desc"}
       </Typography>
 
-      <Box className="flex gap-3">
-        <DefaultButton fullWidth colorType="danger" onClick={closeModal}>
-          Close <CancelIcon />
-        </DefaultButton>
+      <Box className="flex justify-center gap-3">
+        <div>
+          <DefaultButton colorType="danger" onClick={closeModal}>
+            <span className="pt-2">Close</span> <CancelIcon />
+          </DefaultButton>
+        </div>
       </Box>
     </Box>
   );

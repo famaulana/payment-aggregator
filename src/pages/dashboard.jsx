@@ -1,5 +1,4 @@
 import { DefaultButton } from "@/components/atoms/button/DefaultButton";
-import { useLogout } from "@/features/auth/hooks/useLogout";
 import { useModalStore } from "@/store/useModalStore";
 
 const Dashboard = () => {
