@@ -24,6 +24,8 @@ export const useDistricts = (must) => {
         staleTime: 1000 * 60 * 5, // Keep results "fresh" for 5 minutes
       });
     }
+    
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return { loadOptions };

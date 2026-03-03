@@ -21,12 +21,12 @@ export const useSubDistricts = () => {
       });
     } else {
       return queryClient.fetchQuery({
-        // The queryKey includes the inputValue so specific searches are cached
         queryKey: ["get-subdistricts", inputValue],
         queryFn: () => LocationApi.getSubDistricts(inputValue),
         staleTime: 1000 * 60 * 5, // Keep results "fresh" for 5 minutes
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return { loadOptions };

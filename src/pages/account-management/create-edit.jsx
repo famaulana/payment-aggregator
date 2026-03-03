@@ -51,9 +51,11 @@ const CreateEditUser = () => {
     { label: "Headquarter", value: "head_quarter" },
   ];
 
+  const schema = useMemo(() => getUserSchema(isEdit), [isEdit])
+
   const methods = useForm({
     mode: "onChange",
-    resolver: yupResolver(getUserSchema(isEdit)),
+    resolver: yupResolver(schema),
     defaultValues: USER_FORM_DEFAULT,
   });
 
@@ -79,7 +81,6 @@ const CreateEditUser = () => {
     });
 
     if (isEdit) {
-      // console.log(cleanPayload);
       updateUser(id, cleanPayload);
     } else {
       createUser(payload);
@@ -250,6 +251,7 @@ const CreateEditUser = () => {
         ),
       },
     ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [roleWatch, province, city, district],
   );
 

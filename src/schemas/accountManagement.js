@@ -1,4 +1,3 @@
-"use no memo";
 import * as yup from "yup";
 
 // Reusable regex patterns
