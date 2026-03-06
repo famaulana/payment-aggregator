@@ -1,6 +1,7 @@
 import { DefaultButton } from "@/components/atoms/button/DefaultButton";
 import { ControlledSelect } from "@/components/molecules/form-inputs/SelectDefault";
 import { TableCardWithFilter } from "@/components/molecules/tables/TableCardWithFilter";
+import { STATUS_OPTIONS } from "@/utils/constants";
 import { Box, Button, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -124,12 +125,6 @@ const TransactionPage = () => {
     { label: "Merchant", value: "Merchant" },
   ];
 
-  const statusOptions = [
-    { label: "All Status", value: "" },
-    { label: "Active", value: "active" },
-    { label: "Inactive", value: "inactive" },
-  ];
-
   const handleChangeInput = (e) => {
     const { name, value } = e.target;
     setPayload({ ...payload, [name]: value });
@@ -158,7 +153,7 @@ const TransactionPage = () => {
       <ControlledSelect
         name="status"
         onChange={handleChangeInput}
-        options={statusOptions}
+        options={STATUS_OPTIONS}
         value={payload?.status ?? ""}
       />
     </div>

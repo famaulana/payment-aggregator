@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { LogsApi } from "../api/logs.service";
 
-export const useGetActivities = (payload) => {
+export const useGetActivities = (payload, skip = false) => {
   return useQuery({
-    queryKey: ["userList", payload],
-    queryFn: () => LogsApi.getActivities(payload),
+    queryKey: ["activities", payload],
+    queryFn: () => LogsApi.getActivities(payload, skip),
     select: ({ response_code, data, ...response }) => {
       if (response_code == "0000") {
         const modifiedData =
@@ -36,6 +36,7 @@ export const useGetActivities = (payload) => {
         return { response_code, data, ...response };
       }
     },
+    placeholderData: (previousData) => previousData,
     enabled: !!payload, // Only fetch if userId exists
     staleTime: 1000 * 60 * 5, // Keep data fresh for 5 minutes
   });

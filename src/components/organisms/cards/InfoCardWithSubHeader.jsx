@@ -12,7 +12,7 @@ const UserInfoCard = ({
       elevation={0}
       className="rounded-2xl shadow-soft-xl p-6 bg-white border border-gray-100 w-full">
       {/* Header Section */}
-      <Box className="mb-6">
+      <Box className="mb-4">
         <Typography
           variant="h6"
           className="text-[#344767] font-bold text-lg mb-1">

@@ -3,6 +3,7 @@ import { ControlledSelect } from "@/components/molecules/form-inputs/SelectDefau
 import { TableCardWithFilter } from "@/components/molecules/tables/TableCardWithFilter";
 import { useGetUser } from "@/features/users/hooks/useGetUsers";
 import { useModalStore } from "@/store/useModalStore";
+import { ROLE_OPTIONS, STATUS_OPTIONS } from "@/utils/constants";
 import { Box, Button, Typography } from "@mui/material";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";
@@ -109,19 +110,6 @@ const AccountManagement = () => {
     },
   ];
 
-  const roleOptions = [
-    { label: "All Role", value: "" },
-    { label: "Client", value: "client" },
-    { label: "Headquarter", value: "headquarter" },
-    { label: "Merchant", value: "Merchant" },
-  ];
-
-  const statusOptions = [
-    { label: "All Status", value: "" },
-    { label: "Active", value: "active" },
-    { label: "Inactive", value: "inactive" },
-  ];
-
   const handleCreateModal = () => {
     openModal("CREATE_USER", { header: "Create Account" }, "sm");
   };
@@ -138,12 +126,12 @@ const AccountManagement = () => {
     <div className="flex space-x-4">
       <ControlledSelect
         onChange={handleChangeRole}
-        options={roleOptions}
+        options={ROLE_OPTIONS}
         value={payload?.role ?? ""}
       />
       <ControlledSelect
         onChange={handleChangeStatus}
-        options={statusOptions}
+        options={STATUS_OPTIONS}
         value={payload?.status ?? ""}
       />
       <Button

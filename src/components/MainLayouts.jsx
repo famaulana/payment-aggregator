@@ -247,7 +247,7 @@ const SidebarContent = ({ router }) => {
             </span>
             <List>
               {settingsList.map((item) => {
-                const href = `/${item.text.toLowerCase().replace(/\s+/g, "-")}`;
+                const href = `/${item.text == "Logs & Audit" ? "logs-audit" : item.text.toLowerCase().replace(/\s+/g, "-")}`;
                 const isActive = router.pathname === href;
                 return (
                   <SidebarItem

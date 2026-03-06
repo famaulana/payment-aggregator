@@ -4,6 +4,7 @@ import { ControlledSelect } from "@/components/molecules/form-inputs/SelectDefau
 import { TableCardWithFilter } from "@/components/molecules/tables/TableCardWithFilter";
 import UserInfoCard from "@/components/organisms/cards/InfoCardWithSubHeader";
 import { useGetUserDetail } from "@/features/users/hooks/useGetUserDetail";
+import { ROLE_OPTIONS, STATUS_LOGS_OPTIONS } from "@/utils/constants";
 import { ArrowBackOutlined } from "@mui/icons-material";
 import { Box, Button, Typography } from "@mui/material";
 import { useRouter } from "next/router";
@@ -82,19 +83,6 @@ const TransactionDetail = () => {
     },
   ];
 
-  const roleOptions = [
-    { label: "All Role", value: "" },
-    { label: "Client", value: "client" },
-    { label: "Headquarter", value: "headquarter" },
-    { label: "Merchant", value: "Merchant" },
-  ];
-
-  const statusOptions = [
-    { label: "All Activity", value: "" },
-    { label: "Active", value: "active" },
-    { label: "Inactive", value: "inactive" },
-  ];
-
   const handleChangeRole = (e) => {
     console.log(e);
     // setPayload({ ...payload, role: e.target.value });
@@ -125,12 +113,12 @@ const TransactionDetail = () => {
     <div className="flex space-x-4">
       <ControlledSelect
         onChange={handleChangeRole}
-        options={roleOptions}
+        options={ROLE_OPTIONS}
         value={""}
       />
       <ControlledSelect
         onChange={handleChangeStatus}
-        options={statusOptions}
+        options={STATUS_LOGS_OPTIONS}
         value={""}
       />
     </div>

@@ -5,6 +5,7 @@ import { TableCardWithFilter } from "@/components/molecules/tables/TableCardWith
 import UserInfoCard from "@/components/organisms/cards/InfoCardWithSubHeader";
 import { useGetActivities } from "@/features/logs/hooks/getActivities";
 import { useGetUserDetail } from "@/features/users/hooks/useGetUserDetail";
+import { ROLE_OPTIONS, STATUS_OPTIONS } from "@/utils/constants";
 import { ArrowBackOutlined } from "@mui/icons-material";
 import { Box, Button, Typography } from "@mui/material";
 import { useRouter } from "next/router";
@@ -90,19 +91,6 @@ const UserDetail = () => {
     },
   ];
 
-  const roleOptions = [
-    { label: "All Role", value: "" },
-    { label: "Client", value: "client" },
-    { label: "Headquarter", value: "headquarter" },
-    { label: "Merchant", value: "Merchant" },
-  ];
-
-  const statusOptions = [
-    { label: "All Activity", value: "" },
-    { label: "Active", value: "active" },
-    { label: "Inactive", value: "inactive" },
-  ];
-
   const handleChangeRole = (e) => {
     setPayload({ ...payload, role: e.target.value });
   };
@@ -131,12 +119,12 @@ const UserDetail = () => {
     <div className="flex space-x-4">
       <ControlledSelect
         onChange={handleChangeRole}
-        options={roleOptions}
+        options={ROLE_OPTIONS}
         value={payload?.role ?? ""}
       />
       <ControlledSelect
         onChange={handleChangeStatus}
-        options={statusOptions}
+        options={STATUS_OPTIONS}
         value={payload?.status ?? ""}
       />
     </div>
