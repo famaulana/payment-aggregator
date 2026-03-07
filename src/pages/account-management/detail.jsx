@@ -5,11 +5,27 @@ import { TableCardWithFilter } from "@/components/molecules/tables/TableCardWith
 import UserInfoCard from "@/components/organisms/cards/InfoCardWithSubHeader";
 import { useGetActivities } from "@/features/logs/hooks/getActivities";
 import { useGetUserDetail } from "@/features/users/hooks/useGetUserDetail";
-import { ROLE_OPTIONS } from "@/utils/constants";
+import { ROLE_OPTIONS, STATUS_OPTIONS } from "@/utils/constants";
 import { ArrowBackOutlined } from "@mui/icons-material";
 import { Box, Button, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { useState } from "react";
+
+const InfoRow = ({ label, value, isStatus }) => (
+  <Box className="flex justify-between items-center py-3">
+    <Typography
+      sx={{ fontWeight: 500 }}
+      className=" font-semibold text-sm capitalize tracking-tight">
+      {label}
+    </Typography>
+    <Typography
+      className={`text-sm font-medium ${label == "Email" ? "" : "capitalize"} ${
+        isStatus == "active" ? "text-green-600 font-bold" : "text-slate-400"
+      }`}>
+      {value || "-"}
+    </Typography>
+  </Box>
+);
 
 const UserDetail = () => {
   const router = useRouter();
@@ -76,17 +92,23 @@ const UserDetail = () => {
     },
   ];
 
-  const roleOptions = [
-    { label: "All Role", value: "" },
-    { label: "Client", value: "client" },
-    { label: "Headquarter", value: "headquarter" },
-    { label: "Merchant", value: "Merchant" },
-  ];
-
-  const statusOptions = [
-    { label: "All Activity", value: "" },
-    { label: "Active", value: "active" },
-    { label: "Inactive", value: "inactive" },
+  const data = [
+    {
+      id: "User-001",
+      role: "Merchant",
+      activity_type: "Login",
+      description: "Ini description activity",
+      ip_address: "191.121.21.3",
+      created_at: "10 January 2029",
+    },
+    {
+      id: "User-001",
+      role: "Merchant",
+      activity_type: "Login",
+      description: "Ini description activity",
+      ip_address: "191.121.21.4",
+      created_at: "10 January 2029",
+    },
   ];
 
   const handleChangeRole = (e) => {
@@ -97,32 +119,16 @@ const UserDetail = () => {
     setPayload({ ...payload, status: e.target.value });
   };
 
-  const InfoRow = ({ label, value, isStatus }) => (
-    <Box className="flex justify-between items-center py-3">
-      <Typography
-        sx={{ fontWeight: 500 }}
-        className=" font-semibold text-sm capitalize tracking-tight">
-        {label}
-      </Typography>
-      <Typography
-        className={`text-sm font-medium ${label == "Email" ? "" : "capitalize"} ${
-          isStatus == "active" ? "text-green-600 font-bold" : "text-slate-400"
-        }`}>
-        {value || "-"}
-      </Typography>
-    </Box>
-  );
-
   const FilterComponent = () => (
     <div className="flex space-x-4">
       <ControlledSelect
         onChange={handleChangeRole}
-        options={roleOptions}
+        options={ROLE_OPTIONS}
         value={payload?.role ?? ""}
       />
       <ControlledSelect
         onChange={handleChangeStatus}
-        options={statusOptions}
+        options={STATUS_OPTIONS}
         value={payload?.status ?? ""}
       />
     </div>
@@ -211,7 +217,7 @@ const UserDetail = () => {
         <div className="col-span-2">
           <TableCardWithFilter
             title="Activity List"
-            renderFilter={() => <FilterComponent />}
+            renderFilter={() => <FilterComponent payload={payload} />}
             columns={columns}
             data={listActivity?.data ?? []}
             pagination={listActivity?.pagination ?? null}

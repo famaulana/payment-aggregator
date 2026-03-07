@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import { useLogout } from "@/features/auth/hooks/useLogout";
 import { MASTER_MAIN_MENU, MASTER_SETTINGS } from "@/utils/constants";
 import { Logout } from "@mui/icons-material";
@@ -5,51 +6,89 @@ import { Box, List, ListItem, ListItemButton, Typography } from "@mui/material";
 import { getCookie } from "cookies-next";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+
+/**
+ * 1. MOVE SUB-COMPONENTS OUTSIDE
+ * This prevents the "Cannot create components during render" error.
+ */
+const SidebarItem = ({ item, isActive, href, onNavigate }) => {
+  const content = (
+    <ListItemButton
+      selected={isActive}
+      className={`rounded-xl mx-2 transition-all ${isActive ? "bg-white shadow-md" : ""}`}
+      sx={{
+        "&.Mui-selected": {
+          bgcolor: "white !important",
+          borderRadius: "8px",
+        },
+      }}>
+      <div
+        className={`w-8 h-8 flex items-center justify-center rounded-lg mr-3 ${
+          item.text === "Logout"
+            ? "bg-white shadow-sm border border-gray-100 text-[#E42D5D]"
+            : isActive
+              ? "bg-linear-to-tl from-purple-700 to-pink-500 text-white"
+              : "bg-white shadow-sm border border-gray-100 text-[#3A416F]"
+        }`}>
+        <span className="flex items-center justify-center">
+          {React.cloneElement(item.icon, { sx: { fontSize: 18 } })}
+        </span>
+      </div>
+      <Typography
+        className={`text-sm ${isActive ? "font-bold text-[#344767]" : "text-slate-500 font-medium"}`}>
+        {item.text}
+      </Typography>
+    </ListItemButton>
+  );
+
+  // If it's logout, we use a div/button instead of a Link to handle the event properly
+  if (item.text === "Logout") {
+    return (
+      <ListItem disablePadding className="mb-2" onClick={onNavigate}>
+        {content}
+      </ListItem>
+    );
+  }
+
+  return (
+    <ListItem disablePadding className="mb-2">
+      <Link href={href} className="w-full no-underline">
+        {content}
+      </Link>
+    </ListItem>
+  );
+};
 
 const SidebarContent = ({ router }) => {
-  const [mounted, setMounted] = useState(false);
-  const [user, setUser] = useState(null);
   const { mutate: logout } = useLogout();
 
   const onLogout = (e) => {
     e.preventDefault();
-
     logout();
   };
 
-  // 1. Wait for Mount to avoid Hydration Error
-  useEffect(() => {
-    const userRaw = getCookie("user");
-    if (userRaw) {
-      try {
-        setUser(JSON.parse(userRaw));
-      } catch (e) {
-        console.error("Failed to parse user cookie", e);
-      }
-    }
-    setMounted(true);
-  }, []);
+  // Inside SidebarContent
+  const userRaw = getCookie("user");
+  let user = {};
 
-  // 2. Compute menus only if we have a user and are mounted
-  const mainMenuList =
-    mounted && user?.permissions
-      ? MASTER_MAIN_MENU.filter((item) =>
-          user.permissions.some((p) => p.includes(item.key)),
-        )
-      : [];
-
-  const settingsList =
-    mounted && user?.permissions
-      ? MASTER_SETTINGS.filter((item) =>
-          user.permissions.some((p) => p.includes(item.key)),
-        )
-      : [];
-
-  // 3. Prevent the "Flash of Wrong Content"
-  if (!mounted) {
-    return <div className="p-4">Loading Sidebar...</div>;
+  try {
+    user = userRaw ? JSON.parse(userRaw) : null;
+  } catch (e) {
+    console.error("Reliability error: Could not parse user data", e);
   }
+
+  // Compute menus safely
+  const mainMenuList = user?.permissions
+    ? MASTER_MAIN_MENU.filter((item) =>
+        user.permissions.some((p) => p.includes(item.key)),
+      )
+    : [];
+
+  const settingsList = user?.permissions
+    ? MASTER_SETTINGS.filter((item) =>
+        user.permissions.some((p) => p.includes(item.key)),
+      )
+    : [];
 
   return (
     <Box
@@ -63,110 +102,72 @@ const SidebarContent = ({ router }) => {
       <div>
         <div className="flex items-center px-4 py-6">
           <Image
-            src={"/images/logo.png"}
-            width={48}
-            height={48}
+            src="/images/logo.png"
+            width={32}
+            height={32}
             alt="Logo"
-            style={{ objectFit: "contain" }} // Using style for Next.js 13+ compatibility
+            style={{ objectFit: "contain" }}
           />
-          <span className="font-semibold text-[#344767] ml-2">
+          <span className="font-bold text-[#344767] ml-3 tracking-tight text-sm">
             Juara Digital Platform
           </span>
         </div>
 
-        <hr className="h-px mb-4 bg-transparent bg-linear-to-r from-transparent via-black/40 to-transparent border-0" />
+        <hr className="h-px mb-6 bg-transparent bg-linear-to-r from-transparent via-black/10 to-transparent border-0" />
 
-        {/* --- MAIN MENU --- */}
         {mainMenuList.length > 0 && (
-          <>
-            <span className="text-slate-600 font-semibold text-sm px-4 uppercase">
+          <div className="mb-4">
+            <p className="text-slate-400 font-bold text-[11px] px-4 uppercase tracking-widest mb-2">
               Main Menu
-            </span>
+            </p>
             <List>
               {mainMenuList.map((item) => {
                 const href = `/${item.text.toLowerCase().replace(/\s+/g, "-")}`;
-                const isActive = router.pathname === href;
                 return (
                   <SidebarItem
                     key={item.text}
                     item={item}
-                    isActive={isActive}
+                    isActive={router.pathname.startsWith(href)}
                     href={href}
                   />
                 );
               })}
             </List>
-          </>
+          </div>
         )}
 
-        {/* --- SETTINGS --- */}
         {settingsList.length > 0 && (
-          <>
-            <span className="text-slate-600 font-semibold text-sm px-4 uppercase mt-4 block">
+          <div>
+            <p className="text-slate-400 font-bold text-[11px] px-4 uppercase tracking-widest mb-2">
               Settings
-            </span>
+            </p>
             <List>
               {settingsList.map((item) => {
-                const href = `/${item.text == "Logs & Audit" ? "logs-audit" : item.text.toLowerCase().replace(/\s+/g, "-")}`;
-                const isActive = router.pathname === href;
+                const href = `/${item.text === "Logs & Audit" ? "logs-audit" : item.text.toLowerCase().replace(/\s+/g, "-")}`;
                 return (
                   <SidebarItem
                     key={item.text}
                     item={item}
-                    isActive={isActive}
+                    isActive={router.pathname === href}
                     href={href}
                   />
                 );
               })}
             </List>
-          </>
+          </div>
         )}
       </div>
+
       <List>
         <SidebarItem
-          key="logout"
-          item={{
-            text: "Logout",
-            icon: <Logout />,
-          }}
+          item={{ text: "Logout", icon: <Logout /> }}
           isActive={false}
-          href="/dashboard"
+          href="#"
           onNavigate={onLogout}
         />
       </List>
     </Box>
   );
 };
-
-// Sub-component to clean up your map functions
-const SidebarItem = ({ item, isActive, href, ...props }) => (
-  <ListItem disablePadding className="mb-2">
-    <Link href={href} className="w-full no-underline" {...props}>
-      <ListItemButton
-        selected={isActive}
-        className={`rounded-xl mx-2 transition-all ${isActive ? "bg-white shadow-md" : ""}`}
-        sx={{
-          "&.Mui-selected": {
-            bgcolor: "white !important",
-            borderRadius: "8px",
-          },
-        }}>
-        <div
-          className={`w-8 h-8 flex items-center justify-center rounded-lg mr-3 ${item.text == "Logout" ? "bg-white shadow-sm border border-gray-100 text-[#E42D5D]" : ""} 
-            ${
-              isActive && item.text != "Logout"
-                ? "bg-linear-to-tl from-purple-700 to-pink-500 text-white"
-                : "bg-white shadow-sm border border-gray-100 text-[#3A416F]"
-            }`}>
-          <span className="text-[10px]">{item.icon}</span>
-        </div>
-        <Typography
-          className={`text-sm ${isActive ? "font-bold text-[#344767]" : "text-slate-500"}`}>
-          {item.text}
-        </Typography>
-      </ListItemButton>
-    </Link>
-  </ListItem>
-);
 
 export default SidebarContent;

@@ -5,7 +5,16 @@ import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useMemo } from "react";
 
 const ROLE_PERMISSIONS = {
-  system_owner: ["/account-management", "/dashboard", "/settings"],
+  system_owner: [
+    "/account-management",
+    "/dashboard",
+    "/settings",
+    "/merchant-management",
+    "/mdr-settings",
+    "/settlement",
+    "/logs-audit",
+    "/transaction",
+  ],
   client: ["/dashboard", "/monitoring"],
   headquarter: ["/dashboard", "/monitoring"],
   merchant: ["/dashboard", "/monitoring"],
@@ -13,7 +22,6 @@ const ROLE_PERMISSIONS = {
 
 export default function RoleProtector({ children }) {
   const userRaw = getCookie("user");
-  console.log(userRaw);
   const user = userRaw ? JSON.parse(userRaw) : null;
 
   const router = useRouter();
@@ -24,6 +32,7 @@ export default function RoleProtector({ children }) {
     if (!user || user == null) return false;
 
     const allowedPaths = ROLE_PERMISSIONS[user.role] || [];
+    console.log(allowedPaths);
     // Always allow dashboard, otherwise check permissions
     return (
       pathname === "/dashboard" ||

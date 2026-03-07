@@ -11,6 +11,22 @@ import { Box, Button, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
+const InfoRow = ({ label, value, isStatus }) => (
+  <Box className="flex justify-between items-center py-3">
+    <Typography
+      sx={{ fontWeight: 500 }}
+      className=" font-semibold text-sm capitalize tracking-tight">
+      {label}
+    </Typography>
+    <Typography
+      className={`text-sm font-medium ${label == "Email" ? "" : "capitalize"} ${
+        isStatus == "active" ? "text-green-600 font-bold" : "text-slate-400"
+      }`}>
+      {value || "-"}
+    </Typography>
+  </Box>
+);
+
 const UserDetail = () => {
   const router = useRouter();
   const { id } = router.query;
@@ -96,22 +112,6 @@ const UserDetail = () => {
   const handleChangeStatus = (e) => {
     setPayload({ ...payload, status: e.target.value });
   };
-
-  const InfoRow = ({ label, value, isStatus }) => (
-    <Box className="flex justify-between items-center py-3">
-      <Typography
-        sx={{ fontWeight: 500 }}
-        className=" font-semibold text-sm capitalize tracking-tight">
-        {label}
-      </Typography>
-      <Typography
-        className={`text-sm font-medium ${label == "Email" ? "" : "capitalize"} ${
-          isStatus == "active" ? "text-green-600 font-bold" : "text-slate-400"
-        }`}>
-        {value || "-"}
-      </Typography>
-    </Box>
-  );
 
   const FilterComponent = () => (
     <div className="flex space-x-4">

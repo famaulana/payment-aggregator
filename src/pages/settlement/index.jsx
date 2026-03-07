@@ -1,7 +1,6 @@
 import { DefaultButton } from "@/components/atoms/button/DefaultButton";
 import SearchField from "@/components/molecules/form-inputs/SearchField";
 import { ControlledSelect } from "@/components/molecules/form-inputs/SelectDefault";
-import { GradientPagination } from "@/components/molecules/pagination/GradientPagination";
 import { TableCardWithFilter } from "@/components/molecules/tables/TableCardWithFilter";
 import {
   MERCHANT_OPTIONS,
@@ -9,16 +8,85 @@ import {
   PAYMENT_METHOD_OPTIONS,
   STATUS_OPTIONS,
 } from "@/utils/constants";
-import { Box, Button, Typography } from "@mui/material";
+import { Payments, Receipt, Wallet } from "@mui/icons-material";
+import { Box, Button, Card, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
-const TransactionPage = () => {
+const SummaryCard = ({
+  title,
+  amount,
+  growth,
+  type = "percentage",
+  scale,
+  icon = "account_balance_wallet",
+}) => {
+  return (
+    <Card
+      sx={{
+        p: 3,
+        borderRadius: 3,
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+      }}
+      elevation={1}>
+      {/* Left Section */}
+      <Box>
+        <Typography variant="body2" color="text.secondary" gutterBottom>
+          {title}
+        </Typography>
+
+        <Box display="flex" alignItems="center" gap={1}>
+          <Typography variant="h5" fontWeight={700}>
+            {amount}
+          </Typography>
+
+          {type == "percentage" && typeof growth === "number" && (
+            <Typography
+              variant="body2"
+              fontWeight={600}
+              color={growth >= 0 ? "success.main" : "error.main"}>
+              {growth >= 0 ? `+${growth}%` : `-${growth}%`}
+            </Typography>
+          )}
+
+          {type == "count" && typeof growth === "number" && (
+            <Typography
+              variant="body2"
+              fontWeight={600}
+              color={growth >= 0 ? "success.main" : "error.main"}>
+              {growth >= 0 ? `+${growth} ${scale}` : `-${growth} ${scale}`}
+            </Typography>
+          )}
+        </Box>
+      </Box>
+
+      {/* Right Icon with Gradient Background */}
+      <Box
+        sx={{
+          width: 56,
+          height: 56,
+          borderRadius: 3,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "#fff",
+          background: "linear-gradient(135deg, #EC407A, #7E57C2)",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+        }}>
+        {icon}
+      </Box>
+    </Card>
+  );
+};
+
+const SettlementPage = () => {
   const router = useRouter();
 
   const [payload, setPayload] = useState({});
-  const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
 
   const onDetail = (id) => {
     router.push(
@@ -90,6 +158,24 @@ const TransactionPage = () => {
     },
   ];
 
+  const cardIconData = [
+    {
+      title: "Total Requested",
+      amount: "Rp. 250.000.000",
+      icon: <Receipt />,
+    },
+    {
+      title: "Total Approved / Settled",
+      amount: "Rp. 235.000.000",
+      icon: <Wallet />,
+    },
+    {
+      title: "Floating Fund Balance",
+      amount: "Rp. 235.000.000",
+      icon: <Payments />,
+    },
+  ];
+
   const data = [
     {
       created_at: "10 January 2026, 18:00",
@@ -125,18 +211,6 @@ const TransactionPage = () => {
         onChange={handleChangeInput}
         options={MERCHANT_OPTIONS}
         value={payload?.merchant ?? ""}
-      />
-      <ControlledSelect
-        name="payment_method"
-        onChange={handleChangeInput}
-        options={PAYMENT_METHOD_OPTIONS}
-        value={payload?.payment_method ?? ""}
-      />
-      <ControlledSelect
-        name="payment_gateway"
-        onChange={handleChangeInput}
-        options={PAYMENT_GATEWAY_OPTIONS}
-        value={payload?.payment_gateway ?? ""}
       />
       <ControlledSelect
         name="status"
@@ -175,17 +249,24 @@ const TransactionPage = () => {
           </Button>
         </div>
       </div>
+      <div className="mb-4 grid grid-cols-1 xl:grid-cols-3 gap-4">
+        {cardIconData.map((item) => (
+          <SummaryCard
+            key={item.title}
+            title={item.title}
+            amount={item.amount}
+            icon={item.icon}
+          />
+        ))}
+      </div>
       <TableCardWithFilter
-        title="Transaction List"
+        title="Settlement List"
         renderFilter={() => <FilterComponent />}
         columns={columns}
         data={data}
       />
-      <div className="flex justify-end">
-        <GradientPagination totalPages={2} />
-      </div>
     </Box>
   );
 };
 
-export default TransactionPage;
+export default SettlementPage;
