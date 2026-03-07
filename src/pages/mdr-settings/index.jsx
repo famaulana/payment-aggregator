@@ -3,6 +3,7 @@ import SearchField from "@/components/molecules/form-inputs/SearchField";
 import { ControlledSelect } from "@/components/molecules/form-inputs/SelectDefault";
 import { GradientPagination } from "@/components/molecules/pagination/GradientPagination";
 import { TableCardWithFilter } from "@/components/molecules/tables/TableCardWithFilter";
+import { useModalStore } from "@/store/useModalStore";
 import {
   MERCHANT_OPTIONS,
   PAYMENT_GATEWAY_OPTIONS,
@@ -13,37 +14,37 @@ import { Box, Button, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
-const TransactionPage = () => {
+const MDRPage = () => {
   const router = useRouter();
+  const { openModal } = useModalStore();
 
   const [payload, setPayload] = useState({});
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
 
-  const onDetail = (id) => {
-    router.push(
+  const onHistory = (id) => {
+    openModal(
+      "DETAIL_MDR",
       {
-        pathname: `${router.pathname}/detail`,
-        query: { id: id },
+        header: "Riwayat Perubahan MDR",
+        subheader: "Credit/Debit Card - CashUp",
       },
-      undefined,
-      { shallow: true },
+      "md",
+    );
+  };
+
+  const onEdit = (id) => {
+    openModal(
+      "EDIT_MDR",
+      {
+        header: "Edit MDR",
+        subheader: "Credit/Debit Card - CashUp",
+      },
+      "sm",
     );
   };
 
   const columns = [
-    {
-      id: "created_at",
-      label: "Date & Time",
-    },
-    {
-      id: "id",
-      label: "Transaction Id",
-    },
-    {
-      id: "merchant_name",
-      label: "Merchant",
-    },
     {
       id: "payment_method",
       label: "Payment Method",
@@ -53,37 +54,37 @@ const TransactionPage = () => {
       label: "Payment Gateway",
     },
     {
-      id: "amount",
-      label: "Transaction Amount",
+      id: "pg_fee",
+      label: "PG Fee",
     },
     {
-      id: "mdr_fee",
-      label: "MDR Fee",
+      id: "our_fee",
+      label: "Our Fee",
     },
     {
-      id: "status",
-      label: "Status",
-      render: (row) =>
-        row.status == "inactive" ? (
-          <Typography className="font-bold capitalize text-transparent bg-clip-text bg-linear-to-tl from-[#973D3D] to-[#E42D5D]">
-            {row.status}
-          </Typography>
-        ) : (
-          <Typography className="font-bold capitalize text-transparent bg-clip-text bg-linear-to-tl from-[#3D9743] to-[#005607]">
-            {row.status}
-          </Typography>
-        ),
+      id: "total_mdr",
+      label: "Total MDR",
+    },
+    {
+      id: "updated_at",
+      label: "Latest Update",
     },
     {
       id: "action",
       label: "More Action",
-      width: 200,
+      width: 250,
       render: (row) => (
         <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <DefaultButton
-            onClick={onDetail.bind(this, row.id)}
+            onClick={onEdit.bind(this, row.id)}
+            colorType="success"
             sx={{ marginTop: 0 }}>
-            View Details
+            Edit
+          </DefaultButton>
+          <DefaultButton
+            onClick={onHistory.bind(this, row.id)}
+            sx={{ marginTop: 0 }}>
+            History
           </DefaultButton>
         </Box>
       ),
@@ -92,24 +93,20 @@ const TransactionPage = () => {
 
   const data = [
     {
-      created_at: "10 January 2026, 18:00",
-      id: "User-001",
-      merchant_name: "Merchant A",
-      payment_method: "QRIS",
-      payment_gateway: "STI",
-      amount: "Rp. 500.000",
-      mdr_fee: "0.7%",
-      status: "Pending",
+      payment_method: "Credit/Debit Card",
+      payment_gateway: "CashUp",
+      pg_fee: "1.5%",
+      our_fee: "1%",
+      total_mdr: "2.5%",
+      updated_at: "10 January 2026, 18:00",
     },
     {
-      created_at: "10 January 2026, 18:00",
-      id: "User-001",
-      merchant_name: "Merchant A",
-      payment_method: "QRIS",
-      payment_gateway: "STI",
-      amount: "Rp. 500.000",
-      mdr_fee: "0.7%",
-      status: "Success",
+      payment_method: "Credit/Debit Card",
+      payment_gateway: "CashUp",
+      pg_fee: "1.5%",
+      our_fee: "1%",
+      total_mdr: "2.5%",
+      updated_at: "10 January 2026, 18:00",
     },
   ];
 
@@ -176,7 +173,7 @@ const TransactionPage = () => {
         </div>
       </div>
       <TableCardWithFilter
-        title="Transaction List"
+        title="MDR List"
         renderFilter={() => <FilterComponent />}
         columns={columns}
         data={data}
@@ -188,4 +185,4 @@ const TransactionPage = () => {
   );
 };
 
-export default TransactionPage;
+export default MDRPage;

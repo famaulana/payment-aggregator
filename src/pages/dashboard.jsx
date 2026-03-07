@@ -25,15 +25,10 @@ const TransactionSummaryCard = ({
         justifyContent: "space-between",
         alignItems: "center",
       }}
-      elevation={1}
-    >
+      elevation={1}>
       {/* Left Section */}
       <Box>
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          gutterBottom
-        >
+        <Typography variant="body2" color="text.secondary" gutterBottom>
           {title}
         </Typography>
 
@@ -42,22 +37,20 @@ const TransactionSummaryCard = ({
             {amount}
           </Typography>
 
-          {(type == "percentage" && typeof growth === "number") && (
+          {type == "percentage" && typeof growth === "number" && (
             <Typography
               variant="body2"
               fontWeight={600}
-              color={growth >= 0 ? "success.main" : "error.main"}
-            >
+              color={growth >= 0 ? "success.main" : "error.main"}>
               {growth >= 0 ? `+${growth}%` : `-${growth}%`}
             </Typography>
           )}
 
-          {(type == "count" && typeof growth === "number") && (
+          {type == "count" && typeof growth === "number" && (
             <Typography
               variant="body2"
               fontWeight={600}
-              color={growth >= 0 ? "success.main" : "error.main"}
-            >
+              color={growth >= 0 ? "success.main" : "error.main"}>
               {growth >= 0 ? `+${growth} ${scale}` : `-${growth} ${scale}`}
             </Typography>
           )}
@@ -76,17 +69,14 @@ const TransactionSummaryCard = ({
           color: "#fff",
           background: "linear-gradient(135deg, #EC407A, #7E57C2)",
           boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-        }}
-      >
+        }}>
         {icon}
       </Box>
     </Card>
   );
-}
+};
 
 const Dashboard = () => {
-  const { openModal } = useModalStore();
-
   const monthOptions = [
     { label: "January 2026", value: "jan" },
     { label: "February 2026", value: "feb" },
@@ -135,7 +125,7 @@ const Dashboard = () => {
       amount: "Rp. 600.000.000",
       growth: 5,
       type: "percentage",
-      icon: <Receipt />
+      icon: <Receipt />,
     },
     {
       title: "Our Margin",
@@ -156,8 +146,8 @@ const Dashboard = () => {
       title: "Payment Method",
       amount: 20,
       icon: <Payments />,
-    }
-  ]
+    },
+  ];
 
   return (
     <Box className="grid grid-cols-1" gap={2}>
@@ -168,12 +158,12 @@ const Dashboard = () => {
           value={"jan"}
         />
       </div>
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 min-[100rem]:grid-cols-4 gap-4">
         {cardIconData.map((item) => (
           <TransactionSummaryCard {...item} />
         ))}
       </div>
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 min-[100rem]:grid-cols-3 gap-4">
         <UserInfoCard
           title="Total Transaction"
           subtitle="Total transaction based on Payment Method">
@@ -190,8 +180,10 @@ const Dashboard = () => {
           subtitle="This a top payment method in this month">
           <PaymentRingChart />
         </UserInfoCard>
-        <UserInfoCard title="Top 5 Merchant" subtitle="This is a top 5 Merchant in this month">
-          <TableDefault sx={{width: "100%"}} columns={columns} data={data} />
+        <UserInfoCard
+          title="Top 5 Merchant"
+          subtitle="This is a top 5 Merchant in this month">
+          <TableDefault sx={{ width: "100%" }} columns={columns} data={data} />
         </UserInfoCard>
       </div>
     </Box>

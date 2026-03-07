@@ -1,28 +1,19 @@
 import React, { useState } from "react";
-import { Box, TextField, Button, Typography, Grid } from "@mui/material";
 import { useModalStore } from "@/store/useModalStore";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { TextFieldInput } from "@/components/molecules/form-inputs/TextField";
 import { CreateUserSchema } from "@/schemas/accountManagement";
-import { PasswordTextField } from "@/components/molecules/form-inputs/PasswordTextField";
 import { DefaultButton } from "@/components/atoms/button/DefaultButton";
-import { FormBuilder } from "../builder";
-import { RHFSelect } from "@/components/molecules/form-inputs/SelectDefault";
+import { FormBuilder } from "../../builder";
 import { useCreateUser } from "@/features/users/hooks/useCreateUser";
-import { SliderSwitch } from "@/components/molecules/form-inputs/Switch";
+import { Divider } from "@mui/material";
 
-const CreateUserModal = () => {
+const EditMDRModal = () => {
   const closeModal = useModalStore((s) => s.closeModal);
   const { mutate: createUser } = useCreateUser();
 
   const [active, setActive] = useState(false);
-
-  const label = {
-    title: "isActive?",
-    on: "ON",
-    off: "OFF",
-  };
 
   const options = [
     { label: "Admin", value: "admin" },
@@ -68,13 +59,23 @@ const CreateUserModal = () => {
         fields={[
           {
             component: (
-              <TextFieldInput
-                variant="horizontal"
-                name="username"
-                title="Username"
-                placeholder="john_doe"
-                control={control}
-              />
+              <div className="grid gric-cols-1 gap-4">
+                <TextFieldInput
+                  variant="horizontal"
+                  name="username"
+                  title="PG Fee"
+                  placeholder="john_doe"
+                  control={control}
+                />
+                <TextFieldInput
+                  variant="horizontal"
+                  name="username"
+                  title="Our Fee"
+                  placeholder="john_doe"
+                  control={control}
+                />
+                <Divider />
+              </div>
             ),
           },
           {
@@ -82,66 +83,10 @@ const CreateUserModal = () => {
               <TextFieldInput
                 variant="horizontal"
                 name="full_name"
-                title="Full Name"
+                title="Total MDR"
                 placeholder="John Doe"
+                disabled={true}
                 control={control}
-              />
-            ),
-          },
-          {
-            component: (
-              <TextFieldInput
-                variant="horizontal"
-                name="email"
-                title="Email"
-                placeholder="Example@email.com"
-                control={control}
-              />
-            ),
-          },
-          {
-            component: (
-              <PasswordTextField
-                name="password"
-                variant="horizontal"
-                title="Password"
-                placeholder="At least 8 character"
-                control={control}
-              />
-            ),
-          },
-          {
-            component: (
-              <PasswordTextField
-                name="password_confirmation"
-                variant="horizontal"
-                title="Password Confirmation"
-                placeholder="At least 8 character"
-                control={control}
-              />
-            ),
-          },
-          {
-            component: (
-              <RHFSelect
-                options={options}
-                name="role"
-                control={control}
-                placeholder="Pilih salah satu role"
-                title="Role"
-                variant="horizontal"
-                sx={{
-                  "& .MuiSelect-select": { padding: "16.5px 16px" },
-                }}
-              />
-            ),
-          },
-          {
-            component: (
-              <SliderSwitch
-                status={active}
-                label={label}
-                onChange={handleActive}
               />
             ),
           },
@@ -169,4 +114,4 @@ const CreateUserModal = () => {
   );
 };
 
-export default CreateUserModal;
+export default EditMDRModal;

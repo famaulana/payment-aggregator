@@ -10,7 +10,7 @@ const UserInfoCard = ({
   return (
     <Card
       elevation={0}
-      className="rounded-2xl shadow-soft-xl p-6 bg-white border border-gray-100 w-full">
+      className="rounded-2xl shadow-soft-xl p-6 bg-white border border-gray-100 w-full h-auto">
       {/* Header Section */}
       <Box className="mb-4">
         <Typography

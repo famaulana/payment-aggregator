@@ -1,3 +1,4 @@
+import CopyButton from "@/components/atoms/button/CopyButton";
 import { DefaultButton } from "@/components/atoms/button/DefaultButton";
 import { SuccessIcon } from "@/components/atoms/icons/SuccessIcon";
 import { ControlledSelect } from "@/components/molecules/form-inputs/SelectDefault";
@@ -9,120 +10,62 @@ import { ArrowBackOutlined } from "@mui/icons-material";
 import { Box, Button, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 
+const data = {
+  transaction_id: "TXN-1000",
+  ref_id: "User-001",
+  merchant: "Julian Store",
+  payment_method: "QRIS",
+  payment_gateway: "STI",
+  pg_ref_id: "PG-001",
+  amount: "Rp. 500.000",
+  pg_fee: "0.5%",
+  our_fee: "0.2%",
+  total_mdr: "0.7%",
+  final_amount: "Rp. 496.500",
+  status: "pending",
+  date: "10 January 2016, 18:00",
+};
+
+const colorStatus = (status) => {
+  switch (status) {
+    case "success":
+      return "text-[#199700]";
+    case "pending":
+      return "text-[#BC9000]";
+    case "failed":
+      return "text-[#FF5555]";
+    default:
+      return null;
+  }
+};
+
 const TransactionDetail = () => {
   const router = useRouter();
   const { id } = router.query;
-  const { data: detailData } = useGetUserDetail(id);
+  // const { data: detailData } = useGetUserDetail(id);
 
-  const onDetail = (id) => {
-    console.log(id);
+  const handleBack = () => {
+    router.back();
   };
 
-  const columns = [
-    {
-      id: "id",
-      label: "User ID",
-    },
-    {
-      id: "role",
-      label: "Role",
-      render: (row) => (
-        // <Box>
-        <Typography className="capitalize">{row.role}</Typography>
-        // </Box>
-      ),
-    },
-    {
-      id: "activity_type",
-      label: "Activity Type",
-    },
-    {
-      id: "description",
-      label: "Description",
-    },
-    {
-      id: "ip_address",
-      label: "IP Address",
-    },
-    {
-      id: "created_at",
-      label: "Activity Date",
-    },
-    {
-      id: "action",
-      label: "More Action",
-      maxWidth: 50,
-      render: (row) => (
-        <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <DefaultButton
-            onClick={onDetail.bind(this, row.id)}
-            sx={{ marginTop: 0 }}>
-            View Details
-          </DefaultButton>
-        </Box>
-      ),
-    },
-  ];
-
-  const data = [
-    {
-      id: "User-001",
-      role: "Merchant",
-      activity_type: "Login",
-      description: "Ini description activity",
-      ip_address: "191.121.21.3",
-      created_at: "10 January 2029",
-    },
-    {
-      id: "User-001",
-      role: "Merchant",
-      activity_type: "Login",
-      description: "Ini description activity",
-      ip_address: "191.121.21.4",
-      created_at: "10 January 2029",
-    },
-  ];
-
-  const handleChangeRole = (e) => {
-    console.log(e);
-    // setPayload({ ...payload, role: e.target.value });
+  const InfoRow = ({ label, value, isStatus, hasCopy, ...props }) => {
+    const colorText = colorStatus(isStatus);
+    return (
+      <Box className="flex justify-between items-center py-7" {...props}>
+        <Typography
+          sx={{ fontWeight: 500 }}
+          className=" font-semibold text-sm capitalize tracking-tight">
+          {label}
+        </Typography>
+        <div className="flex">
+          <Typography className={`text-sm font-medium capitalize ${colorText}`}>
+            {value || "-"}
+          </Typography>
+          {hasCopy && value && <CopyButton text={value} />}
+        </div>
+      </Box>
+    );
   };
-
-  const handleChangeStatus = (e) => {
-    console.log(e);
-    // setPayload({ ...payload, status: e.target.value });
-  };
-
-  const InfoRow = ({ label, value, isStatus }) => (
-    <Box className="flex justify-between items-center py-3">
-      <Typography
-        sx={{ fontWeight: 500 }}
-        className=" font-semibold text-sm capitalize tracking-tight">
-        {label}
-      </Typography>
-      <Typography
-        className={`text-sm font-medium capitalize ${
-          isStatus == "active" ? "text-green-600 font-bold" : "text-slate-400"
-        }`}>
-        {value || "-"}
-      </Typography>
-    </Box>
-  );
-
-  const FilterComponent = () => (
-    <div className="flex space-x-4">
-      <ControlledSelect
-        onChange={handleChangeRole}
-        options={ROLE_OPTIONS}
-        value={""}
-      />
-      <ControlledSelect
-        onChange={handleChangeStatus}
-        options={STATUS_LOGS_OPTIONS}
-        value={""}
-      />
-    </div>
-  );
 
   return (
     <>
@@ -132,7 +75,8 @@ const TransactionDetail = () => {
           sx={{
             background: "white",
             color: "#E42D5D",
-          }}>
+          }}
+          onClick={handleBack}>
           <ArrowBackOutlined
             sx={{
               fontSize: 20,
@@ -162,53 +106,41 @@ const TransactionDetail = () => {
           </Typography>
         </Button>
       </div>
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 items-start">
         <UserInfoCard
-          title="User Information"
-          subtitle="All Detail information about this user">
-          <InfoRow label="User ID" value={detailData?.data.id} />
-          <InfoRow label="Name" value={detailData?.data.full_name} />
-          <InfoRow label="Email" value={detailData?.data.email} />
-          <InfoRow label="Role" value={detailData?.data.role} />
+          title="Transaction Information"
+          subtitle="All detail information about this transaction">
+          <InfoRow label="Transaction ID" value={data.transaction_id} />
+          <InfoRow label="Ref ID" value={data.ref_id} />
+          <InfoRow label="Merchant" value={data.merchant} />
+          <InfoRow label="Payment Method" value={data.payment_method} />
+          <InfoRow label="Payment Gateway" value={data.payment_gateway} />
+          <InfoRow label="PG Ref ID" value={data.pg_ref_id} hasCopy />
+          <InfoRow label="Status" value={data.status} isStatus={data.status} />
+          <InfoRow label="Date & Time" value={data.date} />
+        </UserInfoCard>
+        <UserInfoCard
+          title="Transaction Amount"
+          subtitle="Amount breakdown on this transaction"
+          className="grid grid-cols-1">
+          <InfoRow label="Transaction Amount" value={data.amount} />
+          <InfoRow label="PG Fee" value={data.pg_fee} />
           <InfoRow
-            label="Status"
-            value={detailData?.data.status}
-            isStatus={detailData?.data.status}
+            label="Our Fee"
+            value={data.our_fee}
+            sx={{
+              borderBottom: "solid 1px #E7E7E7",
+            }}
           />
-          <InfoRow label="Latest Update" value={detailData?.data.updated_at} />
-        </UserInfoCard>
-        <UserInfoCard
-          title="User Permission"
-          subtitle="All Permission on this user"
-          className="grid grid-cols-2 gap-6">
-          {detailData?.data.permissions.map((item) => {
-            const modifiedValue = item.replaceAll("_", " ");
-            return (
-              <div className="flex item-center space-x-2">
-                <div className="flex items-center">
-                  <SuccessIcon size="20" />
-                </div>
-                <div className="flex items-center">
-                  <Typography
-                    sx={{
-                      fontWeight: 500,
-                    }}
-                    className="capitalize">
-                    {modifiedValue}
-                  </Typography>
-                </div>
-              </div>
-            );
-          })}
-        </UserInfoCard>
-        <div className="col-span-2">
-          <TableCardWithFilter
-            title="Activity List"
-            renderFilter={() => <FilterComponent />}
-            columns={columns}
-            data={data}
+          <InfoRow
+            label="Total MDR"
+            value={data.total_mdr}
+            sx={{
+              borderBottom: "solid 1px #E7E7E7",
+            }}
           />
-        </div>
+          <InfoRow label="Final Amount" value={data.final_amount} />
+        </UserInfoCard>
       </div>
     </>
   );

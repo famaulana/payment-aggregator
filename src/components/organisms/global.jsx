@@ -12,13 +12,15 @@ import { useModalStore } from "@/store/useModalStore";
 
 // Import your specific modal views
 import SuccessModal from "./modal/Success";
-import CreateUserModal from "./modal/CreateUser";
 import LoadingModal from "./modal/Loading";
+import EditMDRModal from "./modal/mdr/EditMDR";
+import DetailMDRModal from "./modal/mdr/DetailMDR";
 
 const MODAL_COMPONENTS = {
   SUCCESS: SuccessModal,
-  CREATE_USER: CreateUserModal,
   LOADING: LoadingModal,
+  EDIT_MDR: EditMDRModal,
+  DETAIL_MDR: DetailMDRModal,
 };
 
 export const GlobalModalComponent = () => {
@@ -45,9 +47,16 @@ export const GlobalModalComponent = () => {
       fullWidth>
       {/* HEADER SECTION */}
       <Box className="flex items-center justify-between px-6 pt-4">
-        <Typography variant="h6" className="font-bold text-slate-700">
-          {data?.header || ""}
-        </Typography>
+        <div className="flex flex-col">
+          <Typography variant="h6" className="font-bold text-slate-700">
+            {data?.header || ""}
+          </Typography>
+          {data?.subheader && (
+            <Typography variant="body2" className="text-slate-400">
+              {data?.subheader || ""}
+            </Typography>
+          )}
+        </div>
 
         <IconButton
           onClick={closeModal}
