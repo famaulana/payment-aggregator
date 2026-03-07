@@ -5,12 +5,13 @@ import { GradientPagination } from "@/components/molecules/pagination/GradientPa
 import { TableCardWithFilter } from "@/components/molecules/tables/TableCardWithFilter";
 import { useGetUser } from "@/features/users/hooks/useGetUsers";
 import { useModalStore } from "@/store/useModalStore";
+import { ROLE_OPTIONS, STATUS_OPTIONS } from "@/utils/constants";
 import { Box, Button, Typography } from "@mui/material";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
-const AccountManagement = () => {
+const MerchantManagement = () => {
   const { openModal } = useModalStore();
   const router = useRouter();
 
@@ -21,24 +22,17 @@ const AccountManagement = () => {
   const params = useSearchParams();
   const currentPage = Number(params.get("page")) || 1;
 
-  const { data: listUsers } = useGetUser({ page: currentPage, ...payload });
+  const { data: listUsers } = useGetUser({
+    page: currentPage,
+    role: "merchant",
+    ...payload,
+  });
   const pagination = listUsers?.pagination ?? null;
 
   const onDetail = (id) => {
     router.push(
       {
         pathname: `${router.pathname}/detail`,
-        query: { id: id },
-      },
-      undefined,
-      { shallow: true },
-    );
-  };
-
-  const onEdit = (id) => {
-    router.push(
-      {
-        pathname: `${router.pathname}/create-edit`,
         query: { id: id },
       },
       undefined,
@@ -93,10 +87,7 @@ const AccountManagement = () => {
       width: 300,
       render: (row) => (
         <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <DefaultButton
-            onClick={onEdit.bind(this, row.id)}
-            colorType="success"
-            sx={{ marginTop: 0 }}>
+          <DefaultButton colorType="success" sx={{ marginTop: 0 }}>
             Edit
           </DefaultButton>
           <DefaultButton
@@ -128,21 +119,8 @@ const AccountManagement = () => {
     },
   ];
 
-  const roleOptions = [
-    { label: "All Role", value: "" },
-    { label: "Client", value: "client" },
-    { label: "Headquarter", value: "headquarter" },
-    { label: "Merchant", value: "Merchant" },
-  ];
-
-  const statusOptions = [
-    { label: "All Status", value: "" },
-    { label: "Active", value: "active" },
-    { label: "Inactive", value: "inactive" },
-  ];
-
-  const handleCreatePage = () => {
-    router.push("/account-management/create-edit");
+  const handleCreateModal = () => {
+    openModal("CREATE_USER", { header: "Create Account" }, "sm");
   };
 
   const handleChangeRole = (e) => {
@@ -157,17 +135,17 @@ const AccountManagement = () => {
     <div className="flex space-x-4">
       <ControlledSelect
         onChange={handleChangeRole}
-        options={roleOptions}
+        options={ROLE_OPTIONS}
         value={payload?.role ?? ""}
       />
       <ControlledSelect
         onChange={handleChangeStatus}
-        options={statusOptions}
+        options={STATUS_OPTIONS}
         value={payload?.status ?? ""}
       />
       <Button
         variant="contained"
-        onClick={handleCreatePage}
+        onClick={handleCreateModal}
         sx={{ bgcolor: "#3A416F", borderRadius: "16px" }}>
         Create Account
       </Button>
@@ -223,4 +201,4 @@ const AccountManagement = () => {
   );
 };
 
-export default AccountManagement;
+export default MerchantManagement;

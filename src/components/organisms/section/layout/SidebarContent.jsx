@@ -1,35 +1,55 @@
-import { DefaultButton } from "@/components/atoms/button/DefaultButton";
 import { useLogout } from "@/features/auth/hooks/useLogout";
 import { MASTER_MAIN_MENU, MASTER_SETTINGS } from "@/utils/constants";
+import { Logout } from "@mui/icons-material";
 import { Box, List, ListItem, ListItemButton, Typography } from "@mui/material";
 import { getCookie } from "cookies-next";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 const SidebarContent = ({ router }) => {
+  const [mounted, setMounted] = useState(false);
+  const [user, setUser] = useState(null);
   const { mutate: logout } = useLogout();
 
-  const userRaw = getCookie("user");
-  let user = {};
+  const onLogout = (e) => {
+    e.preventDefault();
 
-  try {
-    user = userRaw ? JSON.parse(userRaw) : null;
-  } catch (e) {
-    console.error("Reliability error: Could not parse user data", e);
-  }
+    logout();
+  };
+
+  // 1. Wait for Mount to avoid Hydration Error
+  useEffect(() => {
+    const userRaw = getCookie("user");
+    if (userRaw) {
+      try {
+        setUser(JSON.parse(userRaw));
+      } catch (e) {
+        console.error("Failed to parse user cookie", e);
+      }
+    }
+    setMounted(true);
+  }, []);
 
   // 2. Compute menus only if we have a user and are mounted
-  const mainMenuList = user?.permissions
-    ? MASTER_MAIN_MENU.filter((item) =>
-        user.permissions.some((p) => p.includes(item.key)),
-      )
-    : [];
+  const mainMenuList =
+    mounted && user?.permissions
+      ? MASTER_MAIN_MENU.filter((item) =>
+          user.permissions.some((p) => p.includes(item.key)),
+        )
+      : [];
 
-  const settingsList = user?.permissions
-    ? MASTER_SETTINGS.filter((item) =>
-        user.permissions.some((p) => p.includes(item.key)),
-      )
-    : [];
+  const settingsList =
+    mounted && user?.permissions
+      ? MASTER_SETTINGS.filter((item) =>
+          user.permissions.some((p) => p.includes(item.key)),
+        )
+      : [];
+
+  // 3. Prevent the "Flash of Wrong Content"
+  if (!mounted) {
+    return <div className="p-4">Loading Sidebar...</div>;
+  }
 
   return (
     <Box
@@ -87,7 +107,7 @@ const SidebarContent = ({ router }) => {
             </span>
             <List>
               {settingsList.map((item) => {
-                const href = `/${item.text.toLowerCase().replace(/\s+/g, "-")}`;
+                const href = `/${item.text == "Logs & Audit" ? "logs-audit" : item.text.toLowerCase().replace(/\s+/g, "-")}`;
                 const isActive = router.pathname === href;
                 return (
                   <SidebarItem
@@ -102,17 +122,26 @@ const SidebarContent = ({ router }) => {
           </>
         )}
       </div>
-
-      <DefaultButton onClick={logout} className="mt-auto">
-        Logout
-      </DefaultButton>
+      <List>
+        <SidebarItem
+          key="logout"
+          item={{
+            text: "Logout",
+            icon: <Logout />,
+          }}
+          isActive={false}
+          href="/dashboard"
+          onNavigate={onLogout}
+        />
+      </List>
     </Box>
   );
 };
 
-const SidebarItem = ({ item, isActive, href }) => (
+// Sub-component to clean up your map functions
+const SidebarItem = ({ item, isActive, href, ...props }) => (
   <ListItem disablePadding className="mb-2">
-    <Link href={href} className="w-full no-underline">
+    <Link href={href} className="w-full no-underline" {...props}>
       <ListItemButton
         selected={isActive}
         className={`rounded-xl mx-2 transition-all ${isActive ? "bg-white shadow-md" : ""}`}
@@ -123,11 +152,12 @@ const SidebarItem = ({ item, isActive, href }) => (
           },
         }}>
         <div
-          className={`w-8 h-8 flex items-center justify-center rounded-lg mr-3 ${
-            isActive
-              ? "bg-linear-to-tl from-purple-700 to-pink-500 text-white"
-              : "bg-white shadow-sm border border-gray-100"
-          }`}>
+          className={`w-8 h-8 flex items-center justify-center rounded-lg mr-3 ${item.text == "Logout" ? "bg-white shadow-sm border border-gray-100 text-[#E42D5D]" : ""} 
+            ${
+              isActive && item.text != "Logout"
+                ? "bg-linear-to-tl from-purple-700 to-pink-500 text-white"
+                : "bg-white shadow-sm border border-gray-100 text-[#3A416F]"
+            }`}>
           <span className="text-[10px]">{item.icon}</span>
         </div>
         <Typography

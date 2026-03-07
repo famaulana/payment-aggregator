@@ -41,9 +41,7 @@ export default function middleware(req) {
   }
 
   /* === PUBLIC ROUTE === */
-  if (
-    ["/login", "/account-management/activity"].includes(req.nextUrl.pathname)
-  ) {
+  if (["/login"].includes(req.nextUrl.pathname)) {
     return NextResponse.next();
   }
 
