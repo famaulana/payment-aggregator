@@ -38,9 +38,9 @@ export const TableCardWithFilter = ({
   });
 
   return (
-    <Box className="bg-white rounded-2xl shadow-soft-xl border-0 overflow-hidden">
+    <Box className="bg-white p-6 rounded-2xl shadow-soft-xl border-0 overflow-hidden">
       {/* HEADER SECTION */}
-      <Box className="p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <Box className=" flex flex-col mb-4 md:flex-row justify-between items-start md:items-center gap-4">
         <Typography variant="h6" className="font-bold text-slate-700">
           {title}
         </Typography>

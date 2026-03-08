@@ -3,7 +3,6 @@ import { ArrowBackOutlined } from "@mui/icons-material";
 import { Box, Button, Typography } from "@mui/material";
 import UserInfoCard from "@/components/organisms/cards/InfoCardWithSubHeader";
 
-// 1. MOVE THESE OUTSIDE THE MAIN COMPONENT
 const InfoRow = ({ label, value, isStatus }) => (
   <Box className="flex justify-between items-center py-3">
     <Typography
@@ -12,7 +11,7 @@ const InfoRow = ({ label, value, isStatus }) => (
       {label}
     </Typography>
     <Typography
-      className={`text-sm font-medium capitalize ${
+      className={`text-sm font-medium ${label != "Email" ? "capitalize" : ""} ${
         isStatus === "active" ? "text-green-600 font-bold" : "text-slate-400"
       }`}>
       {value || "-"}

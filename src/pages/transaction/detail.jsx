@@ -1,11 +1,6 @@
 import CopyButton from "@/components/atoms/button/CopyButton";
-import { DefaultButton } from "@/components/atoms/button/DefaultButton";
-import { SuccessIcon } from "@/components/atoms/icons/SuccessIcon";
-import { ControlledSelect } from "@/components/molecules/form-inputs/SelectDefault";
-import { TableCardWithFilter } from "@/components/molecules/tables/TableCardWithFilter";
 import UserInfoCard from "@/components/organisms/cards/InfoCardWithSubHeader";
-import { useGetUserDetail } from "@/features/users/hooks/useGetUserDetail";
-import { ROLE_OPTIONS, STATUS_LOGS_OPTIONS } from "@/utils/constants";
+import { colorStatusRole } from "@/utils/string";
 import { ArrowBackOutlined } from "@mui/icons-material";
 import { Box, Button, Typography } from "@mui/material";
 import { useRouter } from "next/router";
@@ -26,21 +21,8 @@ const data = {
   date: "10 January 2016, 18:00",
 };
 
-const colorStatus = (status) => {
-  switch (status) {
-    case "success":
-      return "text-[#199700]";
-    case "pending":
-      return "text-[#BC9000]";
-    case "failed":
-      return "text-[#FF5555]";
-    default:
-      return null;
-  }
-};
-
 const InfoRow = ({ label, value, isStatus, hasCopy, ...props }) => {
-  const colorText = colorStatus(isStatus);
+  const colorText = colorStatusRole(isStatus);
   return (
     <Box className="flex justify-between items-center py-7" {...props}>
       <Typography

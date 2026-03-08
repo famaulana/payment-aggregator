@@ -1,12 +1,7 @@
 import React from "react";
 import { Card, Box, Typography } from "@mui/material";
 
-const UserInfoCard = ({
-  title = "title",
-  subtitle = "subtitle",
-  children,
-  ...props
-}) => {
+const UserInfoCard = ({ title = "title", subtitle, children, ...props }) => {
   return (
     <Card
       elevation={0}
@@ -18,9 +13,13 @@ const UserInfoCard = ({
           className="text-[#344767] font-bold text-lg mb-1">
           {title}
         </Typography>
-        <Typography variant="body2" className="text-slate-400">
-          {subtitle}
-        </Typography>
+        {subtitle ? (
+          <Typography variant="body2" className="text-slate-400">
+            {subtitle}
+          </Typography>
+        ) : (
+          ""
+        )}
       </Box>
 
       {/* Content Section */}

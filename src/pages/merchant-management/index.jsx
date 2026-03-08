@@ -40,24 +40,35 @@ const MerchantManagement = () => {
     );
   };
 
+  const onEdit = (id) => {
+    router.push(
+      {
+        pathname: `../account-management/create-edit`,
+        query: { id: id },
+      },
+      undefined,
+      { shallow: true },
+    );
+  };
+
   const columns = [
     {
       id: "id",
-      label: "User ID",
+      label: "Merchant ID",
       width: 90,
     },
     {
       id: "full_name",
-      label: "Name",
+      label: "Merchant Name",
     },
     {
       id: "email",
-      label: "Email",
+      label: "Region Merchant",
     },
     {
-      id: "role",
-      label: "Role",
-      width: 100,
+      id: "active_payment",
+      label: "Active Payment Gateway",
+      //   width: 100,
       render: (row) => (
         <Typography className="capitalize">{row.role}</Typography>
       ),
@@ -79,7 +90,7 @@ const MerchantManagement = () => {
     },
     {
       id: "updated_at",
-      label: "Latest Update",
+      label: "Registration Date",
     },
     {
       id: "action",
@@ -87,7 +98,10 @@ const MerchantManagement = () => {
       width: 300,
       render: (row) => (
         <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <DefaultButton colorType="success" sx={{ marginTop: 0 }}>
+          <DefaultButton
+            onClick={onEdit.bind(this, row.id)}
+            colorType="success"
+            sx={{ marginTop: 0 }}>
             Edit
           </DefaultButton>
           <DefaultButton
@@ -120,7 +134,13 @@ const MerchantManagement = () => {
   ];
 
   const handleCreateModal = () => {
-    openModal("CREATE_USER", { header: "Create Account" }, "sm");
+    router.push(
+      {
+        pathname: `../account-management/create-edit`,
+      },
+      undefined,
+      { shallow: true },
+    );
   };
 
   const handleChangeRole = (e) => {
@@ -147,7 +167,7 @@ const MerchantManagement = () => {
         variant="contained"
         onClick={handleCreateModal}
         sx={{ bgcolor: "#3A416F", borderRadius: "16px" }}>
-        Create Account
+        Create Merchant
       </Button>
     </div>
   );
@@ -181,7 +201,7 @@ const MerchantManagement = () => {
         </div>
       </div>
       <TableCardWithFilter
-        title="Account List"
+        title="Merchant List"
         renderFilter={() => <FilterComponent />}
         columns={columns}
         data={listUsers?.data ?? data}

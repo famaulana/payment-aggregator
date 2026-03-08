@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useDebounce } from "@/utils/useDebounce";
 import { useGetActivities } from "@/features/logs/hooks/getActivities";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { GradientPagination } from "@/components/molecules/pagination/GradientPagination";
 import { TableDefault } from "@/components/molecules/tables/TableDefault";
 import { DefaultButton } from "@/components/atoms/button/DefaultButton";
@@ -12,11 +12,12 @@ import DefaultNavbar from "@/components/molecules/navbar/DefaultNavbar";
 import { ControlledSelect } from "@/components/molecules/form-inputs/SelectDefault";
 import { ROLE_OPTIONS, STATUS_LOGS_OPTIONS } from "@/utils/constants";
 import SearchField from "@/components/molecules/form-inputs/SearchField";
+import { colorStatusRole } from "@/utils/string";
 
 const LogsAuditPage = () => {
   const [search, setSearch] = useState("");
   const [payload, setPayload] = useState({});
-  const [tab, setTab] = useState(1);
+  const [tab, setTab] = useState(0);
 
   const router = useRouter();
 
@@ -37,7 +38,7 @@ const LogsAuditPage = () => {
       activity_type: "Inbound",
       event_type: "Payment Request",
       ref_id: "REF-10000, TXN-1000",
-      status: "Success",
+      status: "success",
       activity_date: "2026-01-10T18:00:00Z",
       desc: null,
       ip_address: null,
@@ -51,7 +52,7 @@ const LogsAuditPage = () => {
       activity_type: "Login",
       event_type: "System Access",
       ref_id: "SES-9921",
-      status: "Success",
+      status: "success",
       activity_date: "2026-01-10T18:00:00Z",
       desc: "User performed action successfully",
       ip_address: "192.168.1.123",
@@ -65,7 +66,7 @@ const LogsAuditPage = () => {
       activity_type: "Inbound",
       event_type: "Callback",
       ref_id: "REF-10001, TXN-1001",
-      status: "Pending",
+      status: "pending",
       activity_date: "2026-01-10T18:00:00Z",
       desc: null,
       ip_address: null,
@@ -79,7 +80,7 @@ const LogsAuditPage = () => {
       activity_type: "Inbound",
       event_type: "Payment Request",
       ref_id: "REF-10004, TXN-1004",
-      status: "Failed",
+      status: "failed",
       activity_date: "2026-01-10T18:00:00Z",
       desc: null,
       ip_address: null,
@@ -93,7 +94,7 @@ const LogsAuditPage = () => {
       activity_type: "Settlement Approval",
       event_type: "Financial Action",
       ref_id: "STL-5521",
-      status: "Success",
+      status: "success",
       activity_date: "2026-01-10T18:00:00Z",
       desc: "User performed action successfully",
       ip_address: "192.168.1.123",
@@ -103,7 +104,17 @@ const LogsAuditPage = () => {
   ];
 
   const onDetail = (id) => {
-    router.push("/detail");
+    if (tab == 1) {
+      router.push(
+        {
+          pathname: `${router.pathname}/detail`,
+        },
+        undefined,
+        { shallow: true },
+      );
+    } else {
+      router.push("../account-management/activity");
+    }
   };
 
   const navbarList = [
@@ -135,6 +146,17 @@ const LogsAuditPage = () => {
     {
       id: tab == 1 ? "status" : "ip_address",
       label: tab == 1 ? "Status" : "IP Address",
+      render: (row) => {
+        const color = colorStatusRole(row.status);
+
+        return tab == 1 ? (
+          <Typography className={`font-bold capitalize ${color}`}>
+            {row.status ?? "-"}
+          </Typography>
+        ) : (
+          (row.status ?? "-")
+        );
+      },
     },
     {
       id: "activity_date",

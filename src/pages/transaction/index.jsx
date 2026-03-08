@@ -9,6 +9,7 @@ import {
   PAYMENT_METHOD_OPTIONS,
   STATUS_OPTIONS,
 } from "@/utils/constants";
+import { colorStatusRole } from "@/utils/string";
 import { Box, Button, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -63,16 +64,14 @@ const TransactionPage = () => {
     {
       id: "status",
       label: "Status",
-      render: (row) =>
-        row.status == "inactive" ? (
-          <Typography className="font-bold capitalize text-transparent bg-clip-text bg-linear-to-tl from-[#973D3D] to-[#E42D5D]">
+      render: (row) => {
+        const color = colorStatusRole(row.status);
+        return (
+          <Typography className={`font-bold capitalize ${color}`}>
             {row.status}
           </Typography>
-        ) : (
-          <Typography className="font-bold capitalize text-transparent bg-clip-text bg-linear-to-tl from-[#3D9743] to-[#005607]">
-            {row.status}
-          </Typography>
-        ),
+        );
+      },
     },
     {
       id: "action",
@@ -99,7 +98,7 @@ const TransactionPage = () => {
       payment_gateway: "STI",
       amount: "Rp. 500.000",
       mdr_fee: "0.7%",
-      status: "Pending",
+      status: "pending",
     },
     {
       created_at: "10 January 2026, 18:00",
@@ -109,7 +108,7 @@ const TransactionPage = () => {
       payment_gateway: "STI",
       amount: "Rp. 500.000",
       mdr_fee: "0.7%",
-      status: "Success",
+      status: "success",
     },
   ];
 

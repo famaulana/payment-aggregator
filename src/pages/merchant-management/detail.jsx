@@ -1,15 +1,101 @@
 import { DefaultButton } from "@/components/atoms/button/DefaultButton";
 import { SuccessIcon } from "@/components/atoms/icons/SuccessIcon";
 import { ControlledSelect } from "@/components/molecules/form-inputs/SelectDefault";
+import { GradientPagination } from "@/components/molecules/pagination/GradientPagination";
 import { TableCardWithFilter } from "@/components/molecules/tables/TableCardWithFilter";
+import { TableDefault } from "@/components/molecules/tables/TableDefault";
 import UserInfoCard from "@/components/organisms/cards/InfoCardWithSubHeader";
 import { useGetActivities } from "@/features/logs/hooks/getActivities";
 import { useGetUserDetail } from "@/features/users/hooks/useGetUserDetail";
-import { ROLE_OPTIONS } from "@/utils/constants";
+import {
+  PAYMENT_GATEWAY_OPTIONS,
+  STATUS_LOGS_OPTIONS,
+} from "@/utils/constants";
 import { ArrowBackOutlined } from "@mui/icons-material";
 import { Box, Button, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { useState } from "react";
+
+const dummy = [
+  {
+    date: "10 january 2026, 18:00",
+    id: "123456xxxxxxx1",
+    merchant: "Julian Store",
+    payment_method: "QRIS",
+    payment_gateway: "STI",
+    amount: "Rp. 500.000",
+    mdr_fee: "0.7%",
+    status: "Pending",
+  },
+  {
+    date: "10 january 2026, 18:00",
+    id: "123456xxxxxxx2",
+    merchant: "Julian Store",
+    payment_method: "Virtual Account",
+    payment_gateway: "Xendit",
+    amount: "Rp. 500.000",
+    mdr_fee: "Rp. 2.500",
+    status: "Success",
+  },
+  {
+    date: "10 january 2026, 18:00",
+    id: "123456xxxxxxx3",
+    merchant: "Julian Store",
+    payment_method: "Bank Transfer",
+    payment_gateway: "Bayarind",
+    amount: "Rp. 500.000",
+    mdr_fee: "Rp. 2.500",
+    status: "Success",
+  },
+  {
+    date: "10 january 2026, 18:00",
+    id: "123456xxxxxxx4",
+    merchant: "Julian Store",
+    payment_method: "Credit/Debit Card",
+    payment_gateway: "CashUp",
+    amount: "Rp. 500.000",
+    mdr_fee: "Rp. 2.500",
+    status: "Success",
+  },
+  {
+    date: "10 january 2026, 18:00",
+    id: "123456xxxxxxx5",
+    merchant: "Julian Store",
+    payment_method: "E-Wallet",
+    payment_gateway: "CRING",
+    amount: "Rp. 500.000",
+    mdr_fee: "Rp. 2.500",
+    status: "Failed",
+  },
+];
+
+const dummyTop = [
+  {
+    payment_method: "QRIS",
+    percentage: "50%",
+    amount: "Rp. 300.000.000",
+  },
+  {
+    payment_method: "Virtual Account",
+    percentage: "20%",
+    amount: "Rp. 100.000.000",
+  },
+  {
+    payment_method: "E-Wallet",
+    percentage: "20%",
+    amount: "Rp. 100.000.000",
+  },
+  {
+    payment_method: "Bank Transfer",
+    percentage: "5%",
+    amount: "Rp. 50.000.000",
+  },
+  {
+    payment_method: "Credit/Debit Card",
+    percentage: "5%",
+    amount: "Rp. 50.000.000",
+  },
+];
 
 const InfoRow = ({ label, value, isStatus }) => (
   <Box className="flex justify-between items-center py-3">
@@ -27,7 +113,22 @@ const InfoRow = ({ label, value, isStatus }) => (
   </Box>
 );
 
-const UserDetail = () => {
+const columnsTop5 = [
+  {
+    id: "payment_method",
+    label: "Payment Method",
+  },
+  {
+    id: "percentage",
+    label: "Total Percentage",
+  },
+  {
+    id: "amount",
+    label: "Total Amount",
+  },
+];
+
+const MerchantDetailsPage = () => {
   const router = useRouter();
   const { id } = router.query;
   const [payload, setPayload] = useState({});
@@ -48,33 +149,36 @@ const UserDetail = () => {
 
   const columns = [
     {
+      id: "date",
+      label: "Date & Time",
+    },
+    {
       id: "id",
-      label: "User ID",
+      label: "Transaction ID",
     },
     {
-      id: "role",
-      label: "Role",
-      render: (row) => (
-        // <Box>
-        <Typography className="capitalize">{row.role}</Typography>
-        // </Box>
-      ),
+      id: "merchant",
+      label: "Merchant",
     },
     {
-      id: "action_type",
-      label: "Activity Type",
+      id: "payment_method",
+      label: "Payment Method",
     },
     {
-      id: "notes",
-      label: "Description",
+      id: "payment_gateway",
+      label: "Payment Gateway",
     },
     {
-      id: "ip_address",
-      label: "IP Address",
+      id: "amount",
+      label: "Transaction Amount",
     },
     {
-      id: "created_at",
-      label: "Activity Date",
+      id: "mdr_fee",
+      label: "MDR Fee",
+    },
+    {
+      id: "status",
+      label: "Status",
     },
     {
       id: "action",
@@ -92,37 +196,26 @@ const UserDetail = () => {
     },
   ];
 
-  const roleOptions = [
-    { label: "All Role", value: "" },
-    { label: "Client", value: "client" },
-    { label: "Headquarter", value: "headquarter" },
-    { label: "Merchant", value: "Merchant" },
-  ];
-
-  const statusOptions = [
-    { label: "All Activity", value: "" },
-    { label: "Active", value: "active" },
-    { label: "Inactive", value: "inactive" },
-  ];
-
-  const handleChangeRole = (e) => {
-    setPayload({ ...payload, role: e.target.value });
-  };
-
-  const handleChangeStatus = (e) => {
-    setPayload({ ...payload, status: e.target.value });
+  const handleChangeInput = (e) => {
+    const { name, value } = e.target;
+    setPayload({ ...payload, [name]: value });
   };
 
   const FilterComponent = () => (
     <div className="flex space-x-4">
       <ControlledSelect
-        onChange={handleChangeRole}
-        options={roleOptions}
-        value={payload?.role ?? ""}
+        onChange={handleChangeInput}
+        options={PAYMENT_GATEWAY_OPTIONS}
+        value={payload?.status ?? ""}
       />
       <ControlledSelect
-        onChange={handleChangeStatus}
-        options={statusOptions}
+        onChange={handleChangeInput}
+        options={PAYMENT_GATEWAY_OPTIONS}
+        value={payload?.status ?? ""}
+      />
+      <ControlledSelect
+        onChange={handleChangeInput}
+        options={STATUS_LOGS_OPTIONS}
         value={payload?.status ?? ""}
       />
     </div>
@@ -169,57 +262,45 @@ const UserDetail = () => {
       </div>
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
         <UserInfoCard
-          title="User Information"
-          subtitle="All Detail information about this user">
-          <InfoRow label="User ID" value={detailData?.data.id} />
-          <InfoRow label="Name" value={detailData?.data.full_name} />
-          <InfoRow label="Email" value={detailData?.data.email} />
-          <InfoRow label="Role" value={detailData?.data.role} />
+          title="Merchant Information"
+          subtitle="All Detail information about this merchant">
+          <InfoRow label="Merchant ID" value={detailData?.data.id} />
+          <InfoRow label="Merchant Name" value={detailData?.data.full_name} />
+          <InfoRow label="Region Merchant" value={detailData?.data.full_name} />
+          <InfoRow
+            label="Active Payment Method"
+            value={detailData?.data.full_name}
+          />
           <InfoRow
             label="Status"
             value={detailData?.data.status}
             isStatus={detailData?.data.status}
           />
-          <InfoRow label="Latest Update" value={detailData?.data.updated_at} />
+          <InfoRow
+            label="Registration Date"
+            value={detailData?.data.created_at}
+          />
         </UserInfoCard>
         <UserInfoCard
-          title="User Permission"
-          subtitle="All Permission on this user"
-          className="grid grid-cols-2 gap-6">
-          {detailData?.data.permissions.map((item, index) => {
-            const modifiedValue = item.replaceAll("_", " ");
-            return (
-              <div
-                key={`permission${index}`}
-                className="flex item-center space-x-2">
-                <div className="flex items-center">
-                  <SuccessIcon size="20" />
-                </div>
-                <div className="flex items-center">
-                  <Typography
-                    sx={{
-                      fontWeight: 500,
-                    }}
-                    className="capitalize">
-                    {modifiedValue}
-                  </Typography>
-                </div>
-              </div>
-            );
-          })}
+          title={`Top 5 Payment Method from ${detailData?.data.full_name}`}
+          subtitle="Payment Method usage from this merchant">
+          <TableDefault columns={columnsTop5} data={dummyTop} />
         </UserInfoCard>
-        <div className="col-span-2">
-          <TableCardWithFilter
-            title="Activity List"
-            renderFilter={() => <FilterComponent />}
-            columns={columns}
-            data={listActivity?.data ?? []}
-            pagination={listActivity?.pagination ?? null}
-          />
-        </div>
+      </div>
+      <div className="mt-4">
+        <TableCardWithFilter
+          title={`Transaction From ${detailData?.data.full_name ?? "Person"}`}
+          renderFilter={() => <FilterComponent />}
+          columns={columns}
+          data={dummy}
+          // pagination={listActivity?.pagination ?? null}
+        />
+      </div>
+      <div className="flex justify-end mt-2 cols">
+        <GradientPagination totalPages={2} />
       </div>
     </>
   );
 };
 
-export default UserDetail;
+export default MerchantDetailsPage;

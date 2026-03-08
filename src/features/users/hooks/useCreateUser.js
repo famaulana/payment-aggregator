@@ -16,7 +16,7 @@ export const useCreateUser = () => {
         openModal("SUCCESS", { messages: response_message });
         router.push(
           {
-            pathname: `account-management/detail`,
+            pathname: `/detail`,
             query: { id: data.id },
           },
           undefined,

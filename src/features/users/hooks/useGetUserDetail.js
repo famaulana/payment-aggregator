@@ -8,10 +8,21 @@ export const useGetUserDetail = (payload) => {
     select: ({ response_code, data, ...response }) => {
       if (response_code == "0000") {
         const updatedDate = new Date(data.updated_at);
+        const createdDate = new Date(data.created_at);
         const modifiedData = {
           ...data,
           role: data.role.replace("_", " "),
           updated_at: updatedDate
+            .toLocaleString("en-GB", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: false,
+            })
+            .replace(" at", ","),
+          created_at: createdDate
             .toLocaleString("en-GB", {
               day: "numeric",
               month: "long",
