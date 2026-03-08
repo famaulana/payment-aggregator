@@ -1,0 +1,35 @@
+name: CI
+
+on: 
+  push:
+    branches:
+      - release/development
+  pull_request:
+    branches:
+      - release/development
+
+jobs:
+  ci: 
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code 🚪
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 🧑‍💻
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.19.5
+          cache: 'npm'   # <– mempercepat install dengan cache node_modules
+
+      - name: Install dependencies 📦
+        run: npm ci      # <– lebih cepat & konsisten dibanding npm install di CI
+
+      - name: Run linter 👀
+        run: npm run lint
+
+      - name: Build project 🏗️
+        run: npm run build
+
+      # - name: Run tests 🧪
+      #   run: npm test

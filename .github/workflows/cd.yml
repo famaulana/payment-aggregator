@@ -1,0 +1,37 @@
+name: CD
+
+on: 
+  push:
+    branches:
+      - release/development
+
+jobs:
+  cd: 
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code 🚪
+        uses: actions/checkout@v4
+
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+
+      - name: Deploy to Development 🚀
+        timeout-minutes: 25
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            cd /var/www/dashboard
+            git pull origin release/development
+            npm ci
+            npm run build
+            pm2 describe dashboard || pm2 start npm --name "dashboard" -- run start
+            pm2 reload dashboard
+            pm2 save
